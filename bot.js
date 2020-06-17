@@ -604,6 +604,9 @@ bot.on('message', async (message) => {
         return;
     }
     if(message.content.toLowerCase().startsWith(`${prefix}roll`)) {
+        if(message.content.toLowerCase() == `${prefix}roll`) {
+            message.reply(`:x: You have to set a range. For example: \`${prefix}roll ${Math.floor((Math.random() * 10) + 1)}/${Math.floor((Math.random() * 100) + 10)}\``);
+        }
         let rollNums = args.shift().split("/");
         rollNums[0] = +rollNums[0], 10;
         rollNums[1] = +rollNums[1], 10;
