@@ -9,6 +9,7 @@ const keyv = new Keyv('sqlite://database.sqlite');
 // const ytdl = require('ytdl-core');
 const myID = '368115473310547969';
 const botID = '705103167557337258';
+const check = ':white_check_mark';
 
 // bot ready message
 bot.on('ready', async () => {
@@ -47,12 +48,12 @@ bot.on('message', async (message) => {
         if(toggleSpam == true) {
             toggleSpam = false;
             await keyv.set('toggle-spam'+message.channel.id, toggleSpam);
-            message.channel.send(':white_check_mark:Spam toggled off.');
+            message.channel.send(`${check} Spam toggled off.`);
             return;
         } else {
             toggleSpam = true;
             await keyv.set('toggle-spam'+message.channel.id, toggleSpam);
-            message.channel.send(':white_check_mark: Spam toggled on.');
+            message.channel.send(`${check} Spam toggled on.`);
             return;
         }
     }
@@ -76,7 +77,7 @@ bot.on('message', async (message) => {
     const command = args.shift().toLowerCase();
     // test command
     if(message.content.toLowerCase() == `${prefix}test`) {
-        message.reply(':white_check_mark: It works!');
+        message.reply(`${check} It works!`);
         return;
     }
     // pings command
@@ -188,7 +189,7 @@ bot.on('message', async (message) => {
             todoList = [];
         }
         todoList.push(todoMsg);
-        message.reply(':white_check_mark: Done.');
+        message.reply(`${check} Done.`);
         await keyv.set('todo-list'+message.author.id, todoList);
         return;
     }
@@ -216,11 +217,11 @@ bot.on('message', async (message) => {
         }
         await keyv.set('todo-private'+message.author.id, todoPrivate);
         if(todoPrivate == true) {
-            message.reply(':white_check_mark: Done, your todo list is now private.');
+            message.reply(`${check} Done, your todo list is now private.`);
             return;
         }
         if(todoPrivate == false) {
-            message.reply(':white_check_mark: Done, your todo list is now public.');
+            message.reply(`${check} Done, your todo list is now public.`);
             return;
         }
         return;
@@ -237,9 +238,9 @@ bot.on('message', async (message) => {
             message.reply(':x: you typed a bad thing and you should feel bad');
             return;
         }
-        todoList[indexToCheck] = "~~" + todoList[indexToCheck] + "~~ :white_check_mark:";
+        todoList[indexToCheck] = "~~" + todoList[indexToCheck] + `~~ ${check}`;
         await keyv.set('todo-list'+message.author.id, todoList);
-        message.reply(':white_check_mark: Done.');
+        message.reply(`${check} Done.`);
         return;
     }
     // todo remove command
@@ -260,7 +261,7 @@ bot.on('message', async (message) => {
         }
         todoList.splice(indexToRemove, 1);
         await keyv.set('todo-list'+message.author.id, todoList);
-        message.reply(':white_check_mark: Done.');
+        message.reply(`${check} Done.`);
         return;
     }
     // todo clear command
@@ -271,7 +272,7 @@ bot.on('message', async (message) => {
             return;
         }
         keyv.delete('todo-list'+message.author.id);
-        message.reply(':white_check_mark: Done.');
+        message.reply(`${check} Done.`);
         return;
     }
     // join command (voice channel)
@@ -306,7 +307,7 @@ bot.on('message', async (message) => {
     if(message.content.toLowerCase().startsWith(`${prefix}quote request`)) {
         let quoteMsg = message.content.substring(17);
         bot.users.resolve(myID).send(`Quote request from ${message.author.username}: ${quoteMsg}`, { split: true });
-        message.reply(':white_check_mark: I\'ve sent the request to the creator of the bot.');
+        message.reply(`${check} I\'ve sent the request to the creator of the bot.`);
         return;
     }
     // quote command
@@ -333,7 +334,7 @@ bot.on('message', async (message) => {
         }
         quoteList.push(quoteMsg);
         await keyv.set('quote-list', quoteList);
-        message.reply(':white_check_mark: Done.');
+        message.reply(`${check} Done.`);
         return;
     }
     // quote remove command
@@ -358,7 +359,7 @@ bot.on('message', async (message) => {
         }
         quoteList.splice(indexToRemove, 1);
         await keyv.set('quote-list', quoteList);
-        message.reply(':white_check_mark: Done.');
+        message.reply(`${check} Done.`);
         return;
     }
     // say command
@@ -385,11 +386,11 @@ bot.on('message', async (message) => {
         if(toggleSame == false) {
             toggleSame = true;
             await keyv.set('toggle-same'+message.channel.id, toggleSame);
-            message.reply(':white_check_mark: Done.');
+            message.reply(`${check} Done.`);
         } else {
             toggleSame = false;
             await keyv.set('toggle-same'+message.channel.id, toggleSame);
-            message.reply(':white_check_mark: Done.');
+            message.reply(`${check} Done.`);
             return;
         }
     }
@@ -408,12 +409,12 @@ bot.on('message', async (message) => {
         if(toggleBruh == false) {
             toggleBruh = true;
             await keyv.set('toggle-bruh'+message.channel.id, toggleBruh);
-            message.channel.send(':white_check_mark: Bruh toggled on.');
+            message.channel.send(`${check} Bruh toggled on.`);
             return;
         } else {
             toggleBruh = false;
             await keyv.set('toggle-bruh'+message.channel.id, toggleBruh);
-            message.channel.send(':white_check_mark: Bruh toggled off.');
+            message.channel.send(`${check} Bruh toggled off.`);
             return;
         }
     }
@@ -456,10 +457,10 @@ bot.on('message', async (message) => {
         await keyv.set('selected-numbers'+message.author.id+message.channel.id, guessNums);
         await keyv.set('random-number'+message.author.id+message.channel.id, randomNum);
         if(guessNums[0] <= -1000000 || guessNums[1] >= 1000000) {
-            message.reply(':white_check_mark: glhf');
+            message.reply(`${check} glhf`);
             return;
         }
-        message.reply(':white_check_mark: Done.');
+        message.reply(`${check} Done.`);
         return;
     }
     if(message.content.toLowerCase().startsWith(`${prefix}guess`)) {
@@ -542,12 +543,12 @@ bot.on('message', async (message) => {
         }
         if(lmfaomans == true) {
             lmfaomans = false;
-            message.channel.send(':white_check_mark: Mans toggled off.');
+            message.channel.send(`${check} Mans toggled off.`);
             await keyv.set('toggle-mans'+message.channel.id, lmfaomans);
             return;
         }
         lmfaomans = true;
-        message.channel.send(':white_check_mark: Mans toggled on.');
+        message.channel.send(`${check} Mans toggled on.`);
         await keyv.set('toggle-mans'+message.channel.id, lmfaomans);
         return;
     }
@@ -577,7 +578,7 @@ bot.on('message', async (message) => {
         //eslint-disable-next-line no-unused-vars
         message.delete().catch(O_o=>{});
         bot.users.resolve(myID).send(`Bug report from ${message.author.username}: ${bugMsg}`);
-        message.reply(':white_check_mark: Your bug report has been sent.');
+        message.reply(`${check} Your bug report has been sent.`);
         return;
     }
     // potPNG mod
