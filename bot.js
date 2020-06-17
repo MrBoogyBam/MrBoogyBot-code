@@ -199,8 +199,6 @@ bot.on('message', async (message) => {
             return;
         }
         let userTDChangeMsg = args.shift();
-        message.reply(`ok`);
-        return;
         console.log(userTDChangeMsg);
         return;
     }
