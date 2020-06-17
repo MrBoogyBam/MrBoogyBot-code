@@ -670,6 +670,8 @@ bot.on('message', async (message) => {
             message.reply(`${commandsHelp}${botPrefix}${pingCmd}${serverInfoCmd}${userInfoCmd}${sayCmd}${suggestCmd}${bugReportCmd}${quoteRequestCmd}${quoteRequestCmd}${quoteCmd}${toggleCmds}${potCmd}${rollCmd}${flipACoinCmd}${todoCmds}${guessCmds}`)
             return;
         }
+        message.reply(':x: This command is not available at the moment.');
+        return;
     }
     // if a command is invalid
     let toggleSpam = await keyv.get('toggle-spam'+message.channel.id);
