@@ -1,0 +1,23 @@
+{
+  "name": "mrboogybot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "bot.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@discordjs/opus": "^0.3.2",
+    "@keyv/sqlite": "^2.0.2",
+    "discord.js": "^12.2.0",
+    "ffmpeg-static": "^4.2.3",
+    "keyv": "^4.0.1",
+    "superagent": "^5.2.2",
+    "ytdl-core": "^2.1.7"
+  },
+  "devDependencies": {
+    "eslint": "^7.2.0"
+  }
+}
