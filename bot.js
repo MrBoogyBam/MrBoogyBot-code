@@ -192,6 +192,17 @@ bot.on('message', async (message) => {
         await keyv.set('todo-list'+message.author.id, todoList);
         return;
     }
+    if(message.content.toLowerCase().startsWith(`${prefix}todo change`)) {
+        if(message.content.toLowerCase() == `${prefix}todo change`) {
+            message.reply(':x: you typed a bad thing and you should feel bad');
+            return;
+        }
+        let userTDChangeMsg = args.shift();
+        message.reply(`ok`);
+        return;
+        console.log(userTDChangeMsg);
+        return;
+    }
     // todo private command
     if(message.content.toLowerCase() == `${prefix}todo private`) {
         let todoPrivate = await keyv.get('todo-private'+message.author.id);
@@ -411,10 +422,6 @@ bot.on('message', async (message) => {
         if(message.content) {
             message.channel.send('Bruh');
         }
-    }
-    if(message.content.toLowerCase() == `${prefix}mathematics`) {
-        message.channel.send('"Mathematics is written for mathematicians." - Nicolaus Copernicus');
-        return;
     }
     if(message.content.toLowerCase() == `${prefix}ttest`) { 
         for(let item of ["1", "2", "3"]) {
@@ -642,26 +649,27 @@ bot.on('message', async (message) => {
         return;
     }
     // help command
+    if(message.content.toLowerCase().startsWith(`${prefix}help`)) {
     if(message.content.toLowerCase() == `${prefix}help`) {
-        const commandsHelp = `\n__**Type \`${prefix}help command\` to see what the command does.**__\n`;
-        const botPrefix = `**${prefix}** - Bot's prefix\n\n`;
-        const pingCmd = `**${prefix}ping**\n`;
-        const serverInfoCmd = `**${prefix}serverinfo**\n`;
-        const userinfoCmd = `**${prefix}userinfo**\n`;
-        const sayCmd = `**${prefix}say**\n`;
-        const suggestCmd = `**${prefix}suggest**\n`;
-        const bugReportCmd = `**${prefix}bug report**\n`;
-        const quoteRequestCmd = `**${prefix}quote request**\n`;
-        const quoteCmd = `**${prefix}quote**\n`;
-        const toggleCmds = `**${prefix}toggle**\n`;
-        const potCmd = `**${prefix}pot**\n`;
-        const mathematicsCmd = `**${prefix}mathematics**\n`;
-        const rollCmd = `**${prefix}roll**\n`;
-        const flipACoinCmd = `**${prefix}flip a coin**\n`;
-        const todoCmds = `**${prefix}todo**\n`;
-        const guessCmds = `**${prefix}guess**\n`;
-        message.reply(':x: This command is not available at the moment.');
-        return;
+            const commandsHelp = `\n__**Type \`${prefix}help command\` to see what the command does.**__\n`;
+            const botPrefix = `**${prefix}** - Bot's prefix\n\n`;
+            const pingCmd = `**${prefix}ping**\n`;
+            const serverInfoCmd = `**${prefix}serverinfo**\n`;
+            const userInfoCmd = `**${prefix}userinfo**\n`;
+            const sayCmd = `**${prefix}say**\n`;
+            const suggestCmd = `**${prefix}suggest**\n`;
+            const bugReportCmd = `**${prefix}bug report**\n`;
+            const quoteRequestCmd = `**${prefix}quote request**\n`;
+            const quoteCmd = `**${prefix}quote**\n`;
+            const toggleCmds = `**${prefix}toggle**\n`;
+            const potCmd = `**${prefix}pot**\n`;
+            const rollCmd = `**${prefix}roll**\n`;
+            const flipACoinCmd = `**${prefix}flip a coin**\n`;
+            const todoCmds = `**${prefix}todo**\n`;
+            const guessCmds = `**${prefix}guess**\n`;
+            message.reply(`${commandsHelp}${botPrefix}${pingCmd}${serverInfoCmd}${userInfoCmd}${sayCmd}${suggestCmd}${bugReportCmd}${quoteRequestCmd}${quoteRequestCmd}${quoteCmd}${toggleCmds}${potCmd}${rollCmd}${flipACoinCmd}${todoCmds}${guessCmds}`)
+            return;
+        }
     }
     // if a command is invalid
     let toggleSpam = await keyv.get('toggle-spam'+message.channel.id);
