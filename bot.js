@@ -307,7 +307,7 @@ bot.on('message', async (message) => {
     if(message.content.toLowerCase().startsWith(`${prefix}quote request`)) {
         let quoteMsg = message.content.substring(17);
         bot.users.resolve(myID).send(`Quote request from ${message.author.username}: ${quoteMsg}`, { split: true });
-        message.reply(`${check} I\'ve sent the request to the creator of the bot.`);
+        message.reply(`${check} I've sent the request to the creator of the bot.`);
         return;
     }
     // quote command
