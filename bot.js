@@ -717,7 +717,7 @@ bot.on('message', async (message) => {
             const flipACoinCmd = `**${prefix}flip a coin**\n`;
             const todoCmds = `**${prefix}todo**\n`;
             const guessCmds = `**${prefix}guess**\n`;
-            message.reply(`${commandsHelp}${botPrefix}${pingCmd}${serverInfoCmd}${userInfoCmd}${sayCmd}${suggestCmd}${bugReportCmd}${quoteRequestCmd}${quoteRequestCmd}${quoteCmd}${toggleCmds}${potCmd}${rollCmd}${flipACoinCmd}${todoCmds}${guessCmds}`)
+            message.reply(`${commandsHelp}${botPrefix}${pingCmd}${serverInfoCmd}${userInfoCmd}${sayCmd}${suggestCmd}${bugReportCmd}${quoteRequestCmd}${quoteCmd}${toggleCmds}${potCmd}${rollCmd}${flipACoinCmd}${todoCmds}${guessCmds}`)
             return;
         }
         let helpMsg = message.content.substring(8);
