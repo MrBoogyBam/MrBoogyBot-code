@@ -1,15 +1,15 @@
-const { Client } = require('discord.js');
+const Discord = require('discord.js');
 const config = require("./config.json");
 const prefix = config.prefix;
 const lmaoObamidSuck = config.lmaoObamidSuck;
-const bot = new Client();
+const bot = new Discord.Client();
 const Keyv = require('keyv');
 const keyv = new Keyv('sqlite://database.sqlite');
 // const fs = require('fs');
 // const ytdl = require('ytdl-core');
 const myID = '368115473310547969';
 const botID = '705103167557337258';
-const check = ':white_check_mark';
+const check = ':white_check_mark:';
 
 // bot ready message
 bot.on('ready', async () => {
@@ -508,11 +508,38 @@ bot.on('message', async (message) => {
         message.reply('what');
         return;
     }
-    if(message.content.toLowerCase() == `${prefix}flip a coin`) {
-        const sides = ["It's heads!", "It's tails!"];
-        const side = Math.floor(Math.random() * sides.length);
-        message.channel.send(sides[side]);
-        return;
+    if(message.content.toLowerCase().startsWith(`${prefix}flip a coin`)) {
+        if(message.content.toLowerCase() == `${prefix}flip a coin`) {
+            message.reply(':x: You have to pick heads or tails.');
+            return;
+        }
+        let coinUsrChoice = message.content.substring(15);
+        let sides = [ "heads", "tails" ];
+        let side = Math.floor(Math.random() * sides.length);
+        if(coinUsrChoice == sides[0]) {
+            if(side == 0) {
+                message.reply(`It's heads, you win!`);
+                return;
+            }
+            if(side == 1) {
+                message.reply(`It's tails, you lose.`);
+                return;
+            }
+        }
+        if(coinUsrChoice == sides[1]) {
+            if(side == 0) {
+                message.reply(`It's heads, you lose.`);
+                return;
+            }
+            if(side == 1) {
+                message.reply(`It's tails, you win!`);
+                return;
+            }
+        }
+        if(coinUsrChoice !== sides[0] || coinUsrChoice !== sides[1]) {
+            message.reply(':x: You can only pick heads or tails.');
+            return;
+        }
     }
     // suggest command
     if(command === 'suggest') {
