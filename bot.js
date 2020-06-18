@@ -696,8 +696,16 @@ bot.on('message', async (message) => {
             message.reply(`${commandsHelp}${botPrefix}${pingCmd}${serverInfoCmd}${userInfoCmd}${sayCmd}${suggestCmd}${bugReportCmd}${quoteRequestCmd}${quoteRequestCmd}${quoteCmd}${toggleCmds}${potCmd}${rollCmd}${flipACoinCmd}${todoCmds}${guessCmds}`)
             return;
         }
-        message.reply(':x: This command is not available at the moment.');
-        return;
+        let helpMsg = message.content.substring(8);
+        const todoCmds2 = `\n__**Type \`${prefix}help command\` to see what the command does.**__\n**__${prefix}todo commands__**\n\n**${prefix}todo list**\n**${prefix}todo add**\n**${prefix}todo remove**\n**${prefix}todo clear**\n**${prefix}todo private**\n**${prefix}todo check**`;
+        if(helpMsg.toLowerCase() == `todo`) {
+            message.reply(todoCmds2);
+            return;
+        }
+        if(helpMsg) {
+            message.reply(`:x: This is not a command, type \`${prefix}help\` for a list of commands.`);
+            return;
+        }
     }
     // if a command is invalid
     let toggleSpam = await keyv.get('toggle-spam'+message.channel.id);
