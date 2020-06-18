@@ -101,22 +101,46 @@ bot.on('message', async (message) => {
             message.channel.send(`Sorry, this command can only work in a server.`);
             return;
         }
-        message.channel.send(`Server name: ${message.guild.name}\nTotal members: ${message.guild.memberCount}\nServer ID: ${message.guild.id}\nCreated at: ${message.guild.createdAt.toUTCString()}`);
+        const serverInfoEmbed = new Discord.MessageEmbed()
+            .setColor(`#00ffff`)
+            .setTitle('Server information')
+            .setAuthor(message.guild.name, message.guild.iconURL())
+            .setDescription(`Server name: ${message.guild.name}\nTotal members: ${message.guild.memberCount}\nServer ID: ${message.guild.id}\nCreated at: ${message.guild.createdAt.toUTCString()}`)
+            .setImage(message.guild.iconURL())
+            .setThumbnail(message.guild.iconURL())
+            .setTimestamp();
+        message.channel.send(serverInfoEmbed);
         return;
     }
     // shows information about the user
     if(message.content.toLowerCase().startsWith(`${prefix}userinfo`)) {
+        const userInfoEmbed = new Discord.MessageEmbed()
+            .setColor(message.member.displayHexColor)
+            .setTitle('User information')
+            .setAuthor(message.author.username, message.author.avatarURL())
+            .setDescription(`User tag: ${message.author.tag}\nUser ID: ${message.author.id}\nCreated at: ${message.author.createdAt.toUTCString()}`)
+            .setImage(message.author.avatarURL())
+            .setThumbnail(message.author.avatarURL())
+            .setTimestamp();
         if(message.content.toLowerCase() == `${prefix}userinfo`) {
-            message.channel.send(`User tag: ${message.author.tag}\nUser ID: ${message.author.id}\nCreated at: ${message.author.createdAt.toUTCString()}`);
+            message.channel.send(userInfoEmbed);
             return;
         }
         const MsgUsrID = message.content.substring(12);
         const UserID = bot.users.resolve(`${MsgUsrID}`)
         if(UserID == null) {
-            message.reply('User was not found.');
+            message.reply(':x: User was not found.');
             return;
         }
-        message.channel.send(`User tag: ${UserID.tag}\nUser ID: ${UserID.id}\nCreated at: ${UserID.createdAt.toUTCString()}`);
+        const userInfoEmbedID = new Discord.MessageEmbed()
+            .setColor(UserID.displayHexColor)
+            .setTitle('User information')
+            .setAuthor(UserID.username, UserID.avatarURL())
+            .setDescription(`User tag: ${UserID.tag}\nUser ID: ${UserID.id}\nCreated at: ${UserID.createdAt.toUTCString()}`)
+            .setImage(UserID.avatarURL())
+            .setThumbnail(UserID.avatarURL())
+            .setTimestamp();
+        message.channel.send(userInfoEmbedID);
         return;
     }
     // todo list command
