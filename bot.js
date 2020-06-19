@@ -704,26 +704,80 @@ bot.on('message', async (message) => {
             const commandsHelp = `\n__**Type \`${prefix}help command\` to see what the command does.**__\n`;
             const botPrefix = `**${prefix}** - Bot's prefix\n\n`;
             const pingCmd = `**${prefix}ping**\n`;
-            const serverInfoCmd = `**${prefix}serverinfo**\n`;
-            const userInfoCmd = `**${prefix}userinfo**\n`;
+            const infoCmds = `**${prefix}info**\n`;
             const sayCmd = `**${prefix}say**\n`;
             const suggestCmd = `**${prefix}suggest**\n`;
             const bugReportCmd = `**${prefix}bug report**\n`;
-            const quoteRequestCmd = `**${prefix}quote request**\n`;
-            const quoteCmd = `**${prefix}quote**\n`;
+            const quoteCmds = `**${prefix}quote**\n`;
             const toggleCmds = `**${prefix}toggle**\n`;
             const potCmd = `**${prefix}pot**\n`;
             const rollCmd = `**${prefix}roll**\n`;
             const flipACoinCmd = `**${prefix}flip a coin**\n`;
             const todoCmds = `**${prefix}todo**\n`;
             const guessCmds = `**${prefix}guess**\n`;
-            message.reply(`${commandsHelp}${botPrefix}${pingCmd}${serverInfoCmd}${userInfoCmd}${sayCmd}${suggestCmd}${bugReportCmd}${quoteRequestCmd}${quoteCmd}${toggleCmds}${potCmd}${rollCmd}${flipACoinCmd}${todoCmds}${guessCmds}`)
+            message.reply(`${commandsHelp}${botPrefix}${pingCmd}${infoCmds}${sayCmd}${suggestCmd}${bugReportCmd}${quoteCmds}${toggleCmds}${potCmd}${rollCmd}${flipACoinCmd}${todoCmds}${guessCmds}`)
             return;
         }
         let helpMsg = message.content.substring(8);
-        const todoCmds2 = `\n__**Type \`${prefix}help command\` to see what the command does.**__\n**__${prefix}todo commands__**\n\n**${prefix}todo list**\n**${prefix}todo add**\n**${prefix}todo remove**\n**${prefix}todo clear**\n**${prefix}todo private**\n**${prefix}todo check**`;
+        const typeHelp = `\n__**Type \`${prefix}help command\` to see what the command does.**__\n`;
+        const todoHelp = `${typeHelp}**__${prefix}todo commands__**\n\n**${prefix}todo list**\n**${prefix}todo add**\n**${prefix}todo remove**\n**${prefix}todo clear**\n**${prefix}todo private**\n**${prefix}todo check**`;
+        const quoteHelp = `${typeHelp}**__${prefix}quote commands__**\n\n**${prefix}quote request**\n**${prefix}quote**`;
+        const guessHelp = `${typeHelp}**__${prefix}guess commands__**\n\n**${prefix}guessset**\n**${prefix}guess**`;
+        const toggleHelp = `${typeHelp}**__${prefix}toggle commands__**\n\n**${prefix}togglespam**\n**${prefix}togglebruh**\n**${prefix}togglesame**\n**${prefix}togglemans**`;
+        const infoHelp = `${typeHelp}**__${prefix}info commands__**\n\n**${prefix}serverinfo**\n**${prefix}userinfo**`;
+        const pingHelp = `\n__**${prefix}ping**__\nShows you the ping of the bot.`;
+        const sayHelp = `\n**__${prefix}say__**\nThe bot will say what you told him to say.\nFor example:\n\`${prefix}say test\`\n\`bot: test\``;
+        const suggestHelp = `\n__**${prefix}suggest**__\nThe bot will send the creator of the bot your suggestion.\nFor example:\n\`${prefix}suggest make a todo list command\``;
+        const bugReportHelp = `\n__**${prefix}bug report**__\nThe bot will send the creator of the bot your bug report.\nFor example:\n\`${prefix}bug report mb!roll is not working.\``;
+        const potHelp = `\n__**${prefix}pot**__\nShows you how to install potPNG mod.`;
+        const rollHelp = `\n__**${prefix}roll**__\nRolls a number between a range you choose.\nFor example:\n\`${prefix}roll ${Math.floor((Math.random() * 10) + 1)}/${Math.floor((Math.random() * 100) + 10)}\``;
+        const flipACoinHelp = `\n__**${prefix}flip a coin**__\nFlips a coin.\nFor example:\n\`${prefix}flip a coin heads\`\n\`bot: It's tails, you lose.\``;
+        if(helpMsg.toLowerCase() == `ping`) {
+            message.reply(pingHelp);
+            return;
+        }
+        if(helpMsg.toLowerCase() == `flip a coin`) {
+            message.reply(flipACoinHelp);
+            return;
+        }
+        if(helpMsg.toLowerCase() == `roll`) {
+            message.reply(rollHelp);
+            return;
+        }
+        if(helpMsg.toLowerCase() == `pot`) {
+            message.reply(potHelp);
+            return;
+        }
+        if(helpMsg.toLowerCase() == `bug report`) {
+            message.reply(bugReportHelp);
+            return;
+        }
+        if(helpMsg.toLowerCase() == `suggest`) {
+            message.reply(suggestHelp);
+            return;
+        }
+        if(helpMsg.toLowerCase() == `say`) {
+            message.reply(sayHelp);
+            return;
+        }
+        if(helpMsg.toLowerCase() == `info`) {
+            message.reply(infoHelp);
+            return;
+        }
         if(helpMsg.toLowerCase() == `todo`) {
-            message.reply(todoCmds2);
+            message.reply(todoHelp);
+            return;
+        }
+        if(helpMsg.toLowerCase() == `quote`) {
+            message.reply(quoteHelp);
+            return;
+        }
+        if(helpMsg.toLowerCase() == `guess`) {
+            message.reply(guessHelp);
+            return;
+        }
+        if(helpMsg.toLowerCase() == `toggle`) {
+            message.reply(toggleHelp);
             return;
         }
         if(helpMsg) {
