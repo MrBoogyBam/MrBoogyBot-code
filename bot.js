@@ -743,8 +743,33 @@ bot.on('message', async (message) => {
         const togglesameHelp = `\n__**${prefix}togglesame**__\nThe bot will say same after every message you send.`;
         const togglemansHelp = `\n__**${prefix}togglemans**__\nThe bot will ask about the mans hackers when you mention them.`;
         const todoLHelp = `\n__**${prefix}todo list**__\nThe bot will send you your todo list.`;
+        const todoAHelp = `\n__**${prefix}todo add**__\nAdd an item to your todo list.\nFor example:\n\`${prefix}todo add test\``;
+        const todoRHelp = `\n__**${prefix}todo remove**__\nRemove an item from your todo list.\nFor example:\n\`${prefix}todo remove test\` (You can also use numbers.)`;
+        const todoChHelp = `\n__**${prefix}todo check**__\nChecks an item in your todo list.\nFor example:\n\`${prefix}todo check test\` (Also works with numbers)`;
+        const todoCHelp = `\n__**${prefix}todo clear**__\nClears your todo list.`;
+        const todoPHelp = `\n__**${prefix}todo private**__\nMakes your todo list private.`;
         if(helpMsg.toLowerCase() == `ping`) {
             message.reply(pingHelp);
+            return;
+        }
+        if(helpMsg.toLowerCase() == `todo private`) {
+            message.reply(todoPHelp);
+            return;
+        }
+        if(helpMsg.toLowerCase() == `todo clear`) {
+            message.reply(todoCHelp);
+            return;
+        }
+        if(helpMsg.toLowerCase() == `todo check`) {
+            message.reply(todoChHelp);
+            return;
+        }
+        if(helpMsg.toLowerCase() == `todo remove`) {
+            message.reply(todoRHelp);
+            return;
+        }
+        if(helpMsg.toLowerCase() == `todo add`) {
+            message.reply(todoAHelp);
             return;
         }
         if(helpMsg.toLowerCase() == `todo list`) {
