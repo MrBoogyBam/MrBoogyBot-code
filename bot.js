@@ -732,8 +732,63 @@ bot.on('message', async (message) => {
         const potHelp = `\n__**${prefix}pot**__\nShows you how to install potPNG mod.`;
         const rollHelp = `\n__**${prefix}roll**__\nRolls a number between a range you choose.\nFor example:\n\`${prefix}roll ${Math.floor((Math.random() * 10) + 1)}/${Math.floor((Math.random() * 100) + 10)}\``;
         const flipACoinHelp = `\n__**${prefix}flip a coin**__\nFlips a coin.\nFor example:\n\`${prefix}flip a coin heads\`\n\`bot: It's tails, you lose.\``;
+        const userinfoHelp = `\n__**${prefix}userinfo**__\nShows information about your account, you can also use it on other people.\nFor example:\n\`${prefix}userinfo 368115473310547969\``;
+        const serverinfoHelp = `\n__**${prefix}serverinfo**__\nShows information about the server.`;
+        const quoteRHelp = `\n__**${prefix}quote request**__\nRequest a quote for \`${prefix}quote\`.\nFor example:\n\`${prefix}quote request "Mathematics is written for mathematicians." - Nicolaus Copernicus\``;
+        const quoteHelp2 = `\n__**${prefix}quote**__\nSends a random quote.`;
+        const guesssetHelp = `\n__**${prefix}guessset**__\nSet a range for \`${prefix}guess\`.\nFor example:\n\`${prefix}guessset ${Math.floor((Math.random() * 10) + 1)}/${Math.floor((Math.random() * 100) + 10)}\``;
+        const guessHelp2 = `\n__**${prefix}guess**__\nGuess a random number between the range you set.\nFor example:\n\`${prefix}guess ${Math.floor((Math.random() * 100) + 10)}\``;
+        const togglespamHelp = `\n__**${prefix}togglespam**__\nThe bot will spam the message you sent. (Only the creator of the bot can use this command.)`;
+        const togglebruhHelp = `\n__**${prefix}togglebruh**__\nThe bot will say bruh after every message you send.`;
+        const togglesameHelp = `\n__**${prefix}togglesame**__\nThe bot will say same after every message you send.`;
+        const togglemansHelp = `\n__**${prefix}togglemans**__\nThe bot will ask about the mans hackers when you mention them.`;
+        const todoLHelp = `\n__**${prefix}todo list**__\nThe bot will send you your todo list.`;
         if(helpMsg.toLowerCase() == `ping`) {
             message.reply(pingHelp);
+            return;
+        }
+        if(helpMsg.toLowerCase() == `todo list`) {
+            message.reply(todoLHelp);
+            return;
+        }
+        if(helpMsg.toLowerCase() == `togglemans`) {
+            message.reply(togglemansHelp);
+            return;
+        }
+        if(helpMsg.toLowerCase() == `togglesame`) {
+            message.reply(togglesameHelp);
+            return;
+        }
+        if(helpMsg.toLowerCase() == `togglebruh`) {
+            message.reply(togglebruhHelp);
+            return;
+        }
+        if(helpMsg.toLowerCase() == `togglespam`) {
+            message.reply(togglespamHelp);
+            return;
+        }
+        if(helpMsg.toLowerCase() == `guess`) {
+            message.reply(guessHelp2);
+            return;
+        }
+        if(helpMsg.toLowerCase() == `guessset`) {
+            message.reply(guesssetHelp);
+            return;
+        }
+        if(helpMsg.toLowerCase() == `quote`) {
+            message.reply(quoteHelp2);
+            return;
+        }
+        if(helpMsg.toLowerCase() == `quote request`) {
+            message.reply(quoteRHelp);
+            return;
+        }
+        if(helpMsg.toLowerCase() == `serverinfo`) {
+            message.reply(serverinfoHelp);
+            return;
+        }
+        if(helpMsg.toLowerCase() == `userinfo`) {
+            message.reply(userinfoHelp);
             return;
         }
         if(helpMsg.toLowerCase() == `flip a coin`) {
