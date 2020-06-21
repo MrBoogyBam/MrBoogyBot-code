@@ -325,6 +325,10 @@ bot.on('message', async (message) => {
             return;
         }
     }
+    if(message.content.toLowerCase() == `${prefix}prefix` || `<@!${botID}> prefix`) {
+        message.reply(`The prefix is \`${prefix}\``);
+        return;
+    }
     // quote request command
     if(message.content.toLowerCase().startsWith(`${prefix}quote request`)) {
         let quoteMsg = message.content.substring(17);
@@ -527,11 +531,6 @@ bot.on('message', async (message) => {
         message.channel.send('I agree with <@!391725558062383105>');
         return;
     }
-    // bot will say "what" when you mention it
-    if(message.content.includes(`<@!${botID}>`)) {
-        message.reply('what');
-        return;
-    }
     if(message.content.toLowerCase().startsWith(`${prefix}flip a coin`)) {
         if(message.content.toLowerCase() == `${prefix}flip a coin`) {
             message.reply(':x: You have to pick heads or tails.');
@@ -579,10 +578,6 @@ bot.on('message', async (message) => {
             message.reply('Your suggestion has been sent.');
             return;
         }
-    }
-    // bot will reply with "what" when pung
-    if(message.content == `<@!${botID}>`) {
-        message.reply('what');
     }
     // toggles mans
     if(message.content.toLowerCase() == `${prefix}togglemans`) {
