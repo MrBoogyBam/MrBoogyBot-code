@@ -29,7 +29,7 @@ bot.on('ready', async () => {
         return;
     }
     theChannel.send(`Done! Bot restarted in ${timeInSeconds} seconds and ${timeInMS}ms`);
-    keyv.delete('restart-server');
+    await keyv.delete('restart-server');
 });
 
 keyv.on('error', err => console.error('Keyv connection error:', err));
