@@ -7,6 +7,7 @@ const Keyv = require('keyv');
 const keyv = new Keyv('sqlite://database.sqlite');
 // const fs = require('fs');
 // const ytdl = require('ytdl-core');
+// const fetch = require('node-fetch');
 const myID = '368115473310547969';
 const botID = '705103167557337258';
 const check = ':white_check_mark:';
@@ -325,7 +326,7 @@ bot.on('message', async (message) => {
             return;
         }
     }
-    if(message.content.toLowerCase() == `${prefix}prefix` || `<@!${botID}> prefix`) {
+    if(message.content.toLowerCase() == `${prefix}prefix` || message.content.toLowerCase() == `<@!${botID}> prefix`) {
         message.reply(`The prefix is \`${prefix}\``);
         return;
     }
