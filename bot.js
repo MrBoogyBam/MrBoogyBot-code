@@ -5,8 +5,7 @@ const lmaoObamidSuck = config.lmaoObamidSuck;
 const bot = new Discord.Client();
 const Keyv = require('keyv');
 const keyv = new Keyv('sqlite://database.sqlite');
-// const fs = require('fs');
-// const ytdl = require('ytdl-core');
+const ytdl = require('ytdl-core');
 // const fetch = require('node-fetch');
 const myID = '368115473310547969';
 const botID = '705103167557337258';
@@ -297,34 +296,6 @@ bot.on('message', async (message) => {
         keyv.delete('todo-list'+message.author.id);
         message.reply(`${check} Done.`);
         return;
-    }
-    // join command (voice channel)
-    if(message.content.toLowerCase() == `${prefix}join`) {
-        if(!message.guild) {
-            message.channel.send(':x: This command only works in a server.');
-        }
-        if(message.member.voice.channel) {
-            await message.member.voice.channel.join();
-            return;
-        } else {
-            message.reply(':x: You have to be in a voice channel.');
-            return;
-        }
-    }
-    // disconnect command (voice chat)
-    if(message.author.bot) return;
-    if(message.content.toLowerCase() == `${prefix}disconnect`) {
-        if(!message.guild) {
-            message.channel.send(':x: This command only works in a server.');
-            return;
-        }
-        if(message.member.voice.channel) {
-            await message.member.voice.channel.leave();
-            return;
-        } else {
-            message.reply(':x: You have to be in a voice channel.');
-            return;
-        }
     }
     if(message.content.toLowerCase() == `${prefix}prefix` || message.content.toLowerCase() == `<@!${botID}> prefix`) {
         message.reply(`The prefix is \`${prefix}\``);
