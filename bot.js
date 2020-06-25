@@ -143,6 +143,28 @@ bot.on('message', async (message) => {
         message.channel.send(userInfoEmbedID);
         return;
     }
+    const MCSweden = ytdl('https://youtu.be/aBkTkxKDduc', { filter: 'audioonly' });
+    const MCMinecraft = ytdl('https://youtu.be/qq-RGFyaq0U', { filter: 'audioonly' });
+    if(message.content.toLowerCase().startsWith(`${prefix}minecraft` || message.content.toLowerCase().startsWith(`${prefix}mc`))) {
+        if(message.content.toLowerCase() == `${prefix}minecraft` || message.content.toLowerCase() == `${prefix}mc`) {
+            let mcMusicList = `\n__**List of minecraft music commands:**__\n\n`;
+            let swedenL = `**${prefix}minecraft sweden**\n`;
+            let minecraftL = `**${prefix}minecraft minecraft**\n`;
+            message.reply(`${mcMusicList}${swedenL}${minecraftL}`);
+            return;
+        }
+        if(message.member.voice.channel) {
+            const connection = await message.member.voice.channel.join();
+            if(message.content.toLowerCase() == `${prefix}minecraft sweden` || message.content.toLowerCase() == `${prefix}mc sweden`) {
+                connection.play(MCSweden);
+                return;
+            }
+            if(message.content.toLowerCase() == `${prefix}minecraft minecraft`) {
+                connection.play(MCMinecraft);
+                return;
+            }
+        }
+    }
     // todo list command
     if(message.content.toLowerCase().startsWith(`${prefix}todo list`)) {
         if(message.content.toLowerCase() == `${prefix}todo list`) {
@@ -682,7 +704,8 @@ bot.on('message', async (message) => {
             const flipACoinCmd = `**${prefix}flip a coin**\n`;
             const todoCmds = `**${prefix}todo**\n`;
             const guessCmds = `**${prefix}guess**\n`;
-            message.reply(`${commandsHelp}${botPrefix}${pingCmd}${infoCmds}${sayCmd}${suggestCmd}${bugReportCmd}${quoteCmds}${toggleCmds}${potCmd}${rollCmd}${flipACoinCmd}${todoCmds}${guessCmds}`)
+            const minecraftCmd = `**${prefix}minecraft**\n`;
+            message.reply(`${commandsHelp}${botPrefix}${pingCmd}${infoCmds}${sayCmd}${suggestCmd}${bugReportCmd}${quoteCmds}${toggleCmds}${potCmd}${rollCmd}${flipACoinCmd}${todoCmds}${guessCmds}${minecraftCmd}`);
             return;
         }
         let helpMsg = message.content.substring(8);
@@ -715,8 +738,13 @@ bot.on('message', async (message) => {
         const todoChHelp = `\n__**${prefix}todo check**__\nChecks an item in your todo list.\nFor example:\n\`${prefix}todo check test\` (Also works with numbers)`;
         const todoCHelp = `\n__**${prefix}todo clear**__\nClears your todo list.`;
         const todoPHelp = `\n__**${prefix}todo private**__\nMakes your todo list private.`;
+        const minecraftHelp = `\n__**${prefix}minecraft**__\nSends a list of minecraft music commands.`;
         if(helpMsg.toLowerCase() == `ping`) {
             message.reply(pingHelp);
+            return;
+        }
+        if(helpMsg.toLowerCase() == `minecraft`) {
+            message.reply(minecraftHelp);
             return;
         }
         if(helpMsg.toLowerCase() == `todo private`) {
