@@ -15,7 +15,7 @@ const check = ':white_check_mark:';
 // bot ready message
 bot.on('ready', async () => {
     console.log(`${bot.user.username} is now online!\nLogs vvvv`);
-    bot.user.setActivity('MrBog', { type: "WATCHING" }).catch(console.error);
+    bot.user.setActivity(`${prefix}help on ${bot.guilds.cache.size} servers`, { type: "WATCHING" }).catch(console.error);
     let serverID =  await keyv.get('restart-server');
     let channelID = await keyv.get('restart-channel');
     let theChannel = bot.channels.resolve(channelID);
@@ -696,7 +696,7 @@ bot.on('message', async (message) => {
     }
     // help command
     if(message.content.toLowerCase().startsWith(`${prefix}help`)) {
-    if(message.content.toLowerCase() == `${prefix}help`) {
+        if(message.content.toLowerCase() == `${prefix}help`) {
             const commandsHelp = `\n__**Type \`${prefix}help command\` to see what the command does.**__\n`;
             const botPrefix = `**${prefix}** - Bot's prefix\n\n`;
             const pingCmd = `**${prefix}ping**\n`;
