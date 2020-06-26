@@ -34,43 +34,6 @@ bot.on('ready', async () => {
 
 keyv.on('error', err => console.error('Keyv connection error:', err));
 
-// toggle spam command
-bot.on('message', async (message) => {
-    if(message.content.toLowerCase() == `${prefix}togglespam`) {
-        if(message.author.id !== `${myID}`) {
-            message.reply('Sorry, only the creator of the bot can use this command.');
-            return;
-        }
-        let toggleSpam = await keyv.get('toggle-spam'+message.channel.id);
-        if(toggleSpam == undefined) {
-            toggleSpam = false;
-        }
-        if(toggleSpam == true) {
-            toggleSpam = false;
-            await keyv.set('toggle-spam'+message.channel.id, toggleSpam);
-            message.channel.send(`${check} Spam toggled off.`);
-            return;
-        } else {
-            toggleSpam = true;
-            await keyv.set('toggle-spam'+message.channel.id, toggleSpam);
-            message.channel.send(`${check} Spam toggled on.`);
-            return;
-        }
-    }
-    let toggleSpam = await keyv.get('toggle-spam'+message.channel.id);
-    if(toggleSpam == true) {
-        if(message.content) {
-            if(message.content == 'Spam toggled on.') return;
-            if(message.content == 'Spam toggled off.') return;
-            if(message.content.includes('Invalid command. Type')) {
-                if(message.author.id == `${botID}`) return;
-            }
-            message.channel.send(message.content);
-            return;
-        }
-    }
-});
-
 bot.on('message', async (message) => {
     if(message.author.bot) return;
     const args = message.content.substring(prefix.length).split(" ");
@@ -375,58 +338,6 @@ bot.on('message', async (message) => {
         }
         return;
     }
-    // says same everytime a message is sent
-    if(message.content.toLowerCase() == `${prefix}togglesame`) {
-        let toggleSame = await keyv.get('toggle-same'+message.channel.id);
-        if(toggleSame == undefined) {
-            toggleSame = false;
-        }
-        if(toggleSame == false) {
-            toggleSame = true;
-            await keyv.set('toggle-same'+message.channel.id, toggleSame);
-            message.reply(`${check} Done.`);
-        } else {
-            toggleSame = false;
-            await keyv.set('toggle-same'+message.channel.id, toggleSame);
-            message.reply(`${check} Done.`);
-            return;
-        }
-    }
-    let toggleSame = await keyv.get('toggle-same'+message.channel.id);
-    if(toggleSame == true) {
-        if(message.content) {
-            message.channel.send('same');
-        }
-    }
-    // says bruh everytime someone sends a message
-    if(message.content.toLowerCase() == `${prefix}togglebruh`) {
-        let toggleBruh = await keyv.get('toggle-bruh'+message.channel.id);
-        if(toggleBruh == undefined) {
-            toggleBruh = false;
-        }
-        if(toggleBruh == false) {
-            toggleBruh = true;
-            await keyv.set('toggle-bruh'+message.channel.id, toggleBruh);
-            message.channel.send(`${check} Bruh toggled on.`);
-            return;
-        } else {
-            toggleBruh = false;
-            await keyv.set('toggle-bruh'+message.channel.id, toggleBruh);
-            message.channel.send(`${check} Bruh toggled off.`);
-            return;
-        }
-    }
-    let toggleBruh = await keyv.get('toggle-bruh'+message.channel.id);
-    if(toggleBruh == true) {
-        if(message.content) {
-            message.channel.send('Bruh');
-        }
-    }
-    if(message.content.toLowerCase() == `${prefix}ttest`) { 
-        for(let item of ["1", "2", "3"]) {
-            console.log(item);
-        }
-    }
     if(message.content.toLowerCase().startsWith(`${prefix}guessset`)) {
         if(message.content.toLowerCase() == `${prefix}guessset`) {
             message.reply(':x: You have to set a range.');
@@ -551,39 +462,6 @@ bot.on('message', async (message) => {
             return;
         }
     }
-    // toggles mans
-    if(message.content.toLowerCase() == `${prefix}togglemans`) {
-        let lmfaomans = await keyv.get('toggle-mans'+message.channel.id);
-        if(lmfaomans == undefined) {
-            lmfaomans = false;
-        }
-        if(lmfaomans == true) {
-            lmfaomans = false;
-            message.channel.send(`${check} Mans toggled off.`);
-            await keyv.set('toggle-mans'+message.channel.id, lmfaomans);
-            return;
-        }
-        lmfaomans = true;
-        message.channel.send(`${check} Mans toggled on.`);
-        await keyv.set('toggle-mans'+message.channel.id, lmfaomans);
-        return;
-    }
-    let lmfaomans = await keyv.get('toggle-mans'+message.channel.id);
-    if(lmfaomans == true) {
-        if(message.content.toLowerCase().includes('lmao')) {
-            message.channel.send('Lmao Man chinese hacker?');
-        }
-    }
-    if(lmfaomans == true) {
-        if(message.content.toLowerCase().includes('lmfao')) {
-            message.channel.send('Lmfao Man chinese hacker?');
-        }
-    }
-    if(lmfaomans == true) {
-        if(message.content.toLowerCase().includes('lmbao')) {
-            message.channel.send('Lmbao Man chinese hacker?');
-        }
-    }
     // bug report command
     if(message.content.toLowerCase().startsWith(`${prefix}bug report`)) {
         if(message.content.toLowerCase() == `${prefix}bug report`) {
@@ -676,13 +554,12 @@ bot.on('message', async (message) => {
             const suggestCmd = `**${prefix}suggest**\n`;
             const bugReportCmd = `**${prefix}bug report**\n`;
             const quoteCmds = `**${prefix}quote**\n`;
-            const toggleCmds = `**${prefix}toggle**\n`;
             const potCmd = `**${prefix}pot**\n`;
             const rollCmd = `**${prefix}roll**\n`;
             const flipACoinCmd = `**${prefix}flip a coin**\n`;
             const todoCmds = `**${prefix}todo**\n`;
             const guessCmds = `**${prefix}guess**\n`;
-            message.reply(`${commandsHelp}${botPrefix}${pingCmd}${infoCmds}${sayCmd}${suggestCmd}${bugReportCmd}${quoteCmds}${toggleCmds}${potCmd}${rollCmd}${flipACoinCmd}${todoCmds}${guessCmds}`);
+            message.reply(`${commandsHelp}${botPrefix}${pingCmd}${infoCmds}${sayCmd}${suggestCmd}${bugReportCmd}${quoteCmds}${potCmd}${rollCmd}${flipACoinCmd}${todoCmds}${guessCmds}`);
             return;
         }
         let helpMsg = message.content.substring(8);
@@ -690,7 +567,6 @@ bot.on('message', async (message) => {
         const todoHelp = `${typeHelp}**__${prefix}todo commands__**\n\n**${prefix}todo list**\n**${prefix}todo add**\n**${prefix}todo remove**\n**${prefix}todo clear**\n**${prefix}todo private**\n**${prefix}todo check**`;
         const quoteHelp = `${typeHelp}**__${prefix}quote commands__**\n\n**${prefix}quote request**\n**${prefix}quote**`;
         const guessHelp = `${typeHelp}**__${prefix}guess commands__**\n\n**${prefix}guessset**\n**${prefix}guess**`;
-        const toggleHelp = `${typeHelp}**__${prefix}toggle commands__**\n\n**${prefix}togglespam**\n**${prefix}togglebruh**\n**${prefix}togglesame**\n**${prefix}togglemans**`;
         const infoHelp = `${typeHelp}**__${prefix}info commands__**\n\n**${prefix}serverinfo**\n**${prefix}userinfo**`;
         const pingHelp = `\n__**${prefix}ping**__\nShows you the ping of the bot.`;
         const sayHelp = `\n**__${prefix}say__**\nThe bot will say what you told him to say.\nFor example:\n\`${prefix}say test\`\n\`bot: test\``;
@@ -705,10 +581,6 @@ bot.on('message', async (message) => {
         const quoteHelp2 = `\n__**${prefix}quote**__\nSends a random quote.`;
         const guesssetHelp = `\n__**${prefix}guessset**__\nSet a range for \`${prefix}guess\`.\nFor example:\n\`${prefix}guessset ${Math.floor((Math.random() * 10) + 1)}/${Math.floor((Math.random() * 100) + 10)}\``;
         const guessHelp2 = `\n__**${prefix}guess**__\nGuess a random number between the range you set.\nFor example:\n\`${prefix}guess ${Math.floor((Math.random() * 100) + 10)}\``;
-        const togglespamHelp = `\n__**${prefix}togglespam**__\nThe bot will spam the message you sent. (Only the creator of the bot can use this command.)`;
-        const togglebruhHelp = `\n__**${prefix}togglebruh**__\nThe bot will say bruh after every message you send.`;
-        const togglesameHelp = `\n__**${prefix}togglesame**__\nThe bot will say same after every message you send.`;
-        const togglemansHelp = `\n__**${prefix}togglemans**__\nThe bot will ask about the mans hackers when you mention them.`;
         const todoLHelp = `\n__**${prefix}todo list**__\nThe bot will send you your todo list.`;
         const todoAHelp = `\n__**${prefix}todo add**__\nAdd an item to your todo list.\nFor example:\n\`${prefix}todo add test\``;
         const todoRHelp = `\n__**${prefix}todo remove**__\nRemove an item from your todo list.\nFor example:\n\`${prefix}todo remove test\` (You can also use numbers.)`;
@@ -741,22 +613,6 @@ bot.on('message', async (message) => {
         }
         if(helpMsg.toLowerCase() == `todo list`) {
             message.reply(todoLHelp);
-            return;
-        }
-        if(helpMsg.toLowerCase() == `togglemans`) {
-            message.reply(togglemansHelp);
-            return;
-        }
-        if(helpMsg.toLowerCase() == `togglesame`) {
-            message.reply(togglesameHelp);
-            return;
-        }
-        if(helpMsg.toLowerCase() == `togglebruh`) {
-            message.reply(togglebruhHelp);
-            return;
-        }
-        if(helpMsg.toLowerCase() == `togglespam`) {
-            message.reply(togglespamHelp);
             return;
         }
         if(helpMsg.toLowerCase() == `guess`) {
@@ -823,21 +679,13 @@ bot.on('message', async (message) => {
             message.reply(guessHelp);
             return;
         }
-        if(helpMsg.toLowerCase() == `toggle`) {
-            message.reply(toggleHelp);
-            return;
-        }
         if(helpMsg) {
             message.reply(`:x: This is not a command, type \`${prefix}help\` for a list of commands.`);
             return;
         }
     }
     // if a command is invalid
-    let toggleSpam = await keyv.get('toggle-spam'+message.channel.id);
     if(message.content.toLowerCase().startsWith(`${prefix}`)) {
-        if(toggleSame == true) return;
-        if(toggleSpam == true) return;
-        if(message.content.toLowerCase() == `${prefix}togglespam`) return;
         message.reply(`Invalid command. Type \`${prefix}help\` for a list of commands.`);
         return;
     }
