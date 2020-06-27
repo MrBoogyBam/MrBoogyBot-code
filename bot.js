@@ -110,6 +110,7 @@ bot.on('message', async (message) => {
     if(message.content.toLowerCase() == `${prefix}level`) {
         let level = await keyv.get('user-level'+message.author.id);
         let experienceL = await keyv.get('user-experience'+message.author.id);
+        let experienceG = await keyv.get('user-experience-goal'+message.author.id);
         if(level == undefined) {
             level = 0;
             await keyv.set('user-level'+message.author.id, level);
@@ -117,6 +118,10 @@ bot.on('message', async (message) => {
         if(experienceL == undefined) {
             experienceL = 0;
             await keyv.set('user-experience'+message.author.id, experienceL);
+        }
+        if(experienceG == undefined) {
+            experienceG = 100;
+            await keyv.set('user-experience'+message.author.id, experienceG);
         }
         const levelEmbed = new Discord.MessageEmbed()
             .setTitle(`${message.author.username}'s level:`)
@@ -357,9 +362,12 @@ bot.on('message', async (message) => {
             return;
         }
         const gambleRoll = Math.floor((Math.random() * 100) + 1);
-        let gambleAmount = args[0];
-        gambleAmount = parseInt(gambleAmount, 10);
         let currencyAmount = await keyv.get('currency-amount'+message.author.id);
+        let gambleAmount = args[0];
+        if(gambleAmount == "all") {
+            gambleAmount = currencyAmount;
+        }
+        gambleAmount = parseInt(gambleAmount, 10);
         if(currencyAmount == undefined) {
             currencyAmount = 0;
         }
