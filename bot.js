@@ -10,6 +10,7 @@ const keyv = new Keyv('sqlite://database.sqlite');
 const myID = '368115473310547969';
 const botID = '705103167557337258';
 const check = ':white_check_mark:';
+const currency = "BoogyBits";
 
 // bot ready message
 bot.on('ready', async () => {
@@ -104,6 +105,27 @@ bot.on('message', async (message) => {
             .setThumbnail(UserID.avatarURL())
             .setTimestamp();
         message.channel.send(userInfoEmbedID);
+        return;
+    }
+    if(message.content.toLowerCase() == `${prefix}level`) {
+        let level = await keyv.get('user-level'+message.author.id);
+        let experienceL = await keyv.get('user-experience'+message.author.id);
+        if(level == undefined) {
+            level = 0;
+            await keyv.set('user-level'+message.author.id, level);
+        }
+        if(experienceL == undefined) {
+            experienceL = 0;
+            await keyv.set('user-experience'+message.author.id, experienceL);
+        }
+        const levelEmbed = new Discord.MessageEmbed()
+            .setTitle(`${message.author.username}'s level:`)
+            .setAuthor(message.author.username, message.author.avatarURL())
+            .setThumbnail(message.author.avatarURL())
+            .setTimestamp()
+            .setColor('#19F000')
+            .setDescription(`**Level: ${level}**\n**XP: ${experienceL}**`);
+        message.reply(levelEmbed);
         return;
     }
     // todo list command
@@ -324,6 +346,72 @@ bot.on('message', async (message) => {
         message.reply(`${check} Done.`);
         return;
     }
+    if(message.content.toLowerCase() == `${prefix}boogybits`) {
+        let currencyAmount = await keyv.get('currency-amount'+message.author.id);
+        message.reply(`You have ${currencyAmount} ${currency}.`);
+        return;
+    }
+    if(message.content.toLowerCase().startsWith(`${prefix}gamble`)) {
+        if(message.content.toLowerCase() == `${prefix}gamble`) {
+            message.reply(':x: you typed a bad thing and you should feel bad');
+            return;
+        }
+        const gambleRoll = Math.floor((Math.random() * 100) + 1);
+        let gambleAmount = args[0];
+        gambleAmount = parseInt(gambleAmount, 10);
+        let currencyAmount = await keyv.get('currency-amount'+message.author.id);
+        if(currencyAmount == undefined) {
+            currencyAmount = 0;
+        }
+        if(gambleAmount > currencyAmount) {
+            message.reply(`:x: You don't have enough ${currency}.`);
+            return;
+        }
+        if(isNaN(gambleAmount)) {
+            message.reply(':x: You can only use integers');
+            return;
+        }
+        if(gambleAmount <= 0) {
+            message.reply(':x: you typed a bad thing and you should feel bad');
+            return;
+        }
+        currencyAmount = currencyAmount - gambleAmount;
+        if(gambleRoll > 60) {
+            if(gambleRoll == 69 || gambleRoll == 99 || gambleRoll == 100) {
+                currencyAmount = currencyAmount + (gambleAmount * 3);
+                await keyv.set('currency-amount'+message.author.id, currencyAmount);
+                message.channel.send(`${message.author.username} rolled ${gambleRoll} and won ${gambleAmount * 3} <:PogChamp:726326803119079504> THREE TIMES THEIR BET <:PogChamp:726326803119079504> They now have ${currencyAmount} ${currency}.`);
+                return;
+            }
+            currencyAmount = currencyAmount + (gambleAmount * 2);
+            await keyv.set('currency-amount'+message.author.id, currencyAmount);
+            message.channel.send(`${message.author.username} rolled ${gambleRoll} and won ${gambleAmount * 2} <:PogChamp:726326803119079504> They now have ${currencyAmount} ${currency}.`);
+            return;
+        } else if(gambleRoll <= 60) {
+            await keyv.set('currency-amount'+message.author.id, currencyAmount);
+            message.channel.send(`${message.author.username} rolled ${gambleRoll} and lost ${gambleAmount} <:LUL:726332433670340628> They now have ${currencyAmount} ${currency}.`);
+            return;
+        }
+        return;
+    }
+    if(message.content.toLowerCase() == `${prefix}jobs`) {
+        LOJ = `\n__**List of jobs:**__\n\n`;
+        message.reply(`${LOJ}`);
+        return;
+    }
+    if(message.content.toLowerCase().startsWith(`${prefix}setboogybits`)) {
+        if(message.author.id !== '341076015663153153' && message.author.id !== '286600748094062602' && message.author.id !== myID) {
+            message.reply(':x: you have no perms');
+            return;
+        } else {
+            let currencyS = args[0];
+            currencyS = parseInt(currencyS, 10);
+            let currencyAmount = currencyS;
+            await keyv.set('currency-amount'+message.author.id, currencyAmount);
+            message.reply(`${check} Done.`);
+            return;
+        }
+    }
     // calculate command
     if(message.content.toLowerCase().startsWith(`${prefix}calculate`)) {
         if(message.content.toLowerCase() == `${prefix}calculate`) {
@@ -351,6 +439,9 @@ bot.on('message', async (message) => {
             return;
         } else if (operation == "/" || operation == ":" || operation == "÷") {
             message.reply(number1 / number2);
+            return;
+        } else if (operation == "^") {
+            message.reply(number1 ** number2);
             return;
         } else {
             message.reply(':x: That is not an operation.');
