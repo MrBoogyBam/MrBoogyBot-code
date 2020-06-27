@@ -260,6 +260,7 @@ bot.on('message', async (message) => {
         message.reply(`${check} Done.`);
         return;
     }
+    // prefix command
     if(message.content.toLowerCase() == `${prefix}prefix` || message.content.toLowerCase() == `<@!${botID}> prefix`) {
         message.reply(`The prefix is \`${prefix}\``);
         return;
@@ -323,6 +324,7 @@ bot.on('message', async (message) => {
         message.reply(`${check} Done.`);
         return;
     }
+    // calculate command
     if(message.content.toLowerCase().startsWith(`${prefix}calculate`)) {
         if(message.content.toLowerCase() == `${prefix}calculate`) {
             message.reply(':x: you typed a bad thing and you should feel bad');
