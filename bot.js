@@ -323,6 +323,38 @@ bot.on('message', async (message) => {
         message.reply(`${check} Done.`);
         return;
     }
+    if(message.content.toLowerCase().startsWith(`${prefix}calculate`)) {
+        if(message.content.toLowerCase() == `${prefix}calculate`) {
+            message.reply(':x: you typed a bad thing and you should feel bad');
+            return;
+        }
+        let calculationNums = args;
+        let number1 = calculationNums[0];
+        let number2 = calculationNums[2];
+        let operation = calculationNums[1];
+        number1 = Number(number1, 10);
+        number2 = Number(number2, 10);
+        if(isNaN(number1) || isNaN(number2)) {
+            message.reply(':x: You can only use integers.');
+            return;
+        }
+        if(operation == "+") {
+            message.reply(number1 + number2);
+            return;
+        } else if (operation == "-") {
+            message.reply(number1 - number2);
+            return;
+        } else if (operation == "*" || operation == "x") {
+            message.reply(number1 * number2);
+            return;
+        } else if (operation == "/" || operation == ":" || operation == "÷") {
+            message.reply(number1 / number2);
+            return;
+        } else {
+            message.reply(':x: That is not an operation.');
+            return;
+        }
+    }
     // say command
     if(command === 'say') {
         if(message.content.toLowerCase().startsWith(`${prefix}say`) == true) {
@@ -416,8 +448,16 @@ bot.on('message', async (message) => {
     }
     if(message.content.toLowerCase().startsWith(`${prefix}flip a coin`)) {
         if(message.content.toLowerCase() == `${prefix}flip a coin`) {
-            message.reply(':x: You have to pick heads or tails.');
-            return;
+            let sides = [ "heads", "tails" ];
+            let side = Math.floor(Math.random() * sides.length);
+            if(side == 0) {
+                message.reply(`The coin landed on heads.`);
+                return;
+            }
+            if(side == 1) {
+                message.reply(`The coin landed on tails.`);
+                return;
+            }
         }
         let coinUsrChoice = message.content.substring(15);
         let sides = [ "heads", "tails" ];
@@ -559,7 +599,8 @@ bot.on('message', async (message) => {
             const flipACoinCmd = `**${prefix}flip a coin**\n`;
             const todoCmds = `**${prefix}todo**\n`;
             const guessCmds = `**${prefix}guess**\n`;
-            message.reply(`${commandsHelp}${botPrefix}${pingCmd}${infoCmds}${sayCmd}${suggestCmd}${bugReportCmd}${quoteCmds}${potCmd}${rollCmd}${flipACoinCmd}${todoCmds}${guessCmds}`);
+            const calculateCmd = `**${prefix}calculate**\n`;
+            message.reply(`${commandsHelp}${botPrefix}${pingCmd}${infoCmds}${sayCmd}${suggestCmd}${bugReportCmd}${quoteCmds}${potCmd}${rollCmd}${flipACoinCmd}${todoCmds}${guessCmds}${calculateCmd}`);
             return;
         }
         let helpMsg = message.content.substring(8);
@@ -574,7 +615,7 @@ bot.on('message', async (message) => {
         const bugReportHelp = `\n__**${prefix}bug report**__\nThe bot will send the creator of the bot your bug report.\nFor example:\n\`${prefix}bug report mb!roll is not working.\``;
         const potHelp = `\n__**${prefix}pot**__\nShows you how to install potPNG mod.`;
         const rollHelp = `\n__**${prefix}roll**__\nRolls a number between a range you choose.\nFor example:\n\`${prefix}roll ${Math.floor((Math.random() * 10) + 1)}/${Math.floor((Math.random() * 100) + 10)}\``;
-        const flipACoinHelp = `\n__**${prefix}flip a coin**__\nFlips a coin.\nFor example:\n\`${prefix}flip a coin heads\`\n\`bot: It's tails, you lose.\``;
+        const flipACoinHelp = `\n__**${prefix}flip a coin**__\nFlips a coin.\nFor example:\n\`${prefix}flip a coin heads\`\n\`bot: It's tails, you lose.\`\nor\n\`${prefix}flip a coin\`\n\`bot: The coin landed on heads.\``;
         const userinfoHelp = `\n__**${prefix}userinfo**__\nShows information about your account, you can also use it on other people.\nFor example:\n\`${prefix}userinfo 368115473310547969\``;
         const serverinfoHelp = `\n__**${prefix}serverinfo**__\nShows information about the server.`;
         const quoteRHelp = `\n__**${prefix}quote request**__\nRequest a quote for \`${prefix}quote\`.\nFor example:\n\`${prefix}quote request "Mathematics is written for mathematicians." - Nicolaus Copernicus\``;
@@ -587,8 +628,13 @@ bot.on('message', async (message) => {
         const todoChHelp = `\n__**${prefix}todo check**__\nChecks an item in your todo list.\nFor example:\n\`${prefix}todo check test\` (Also works with numbers)`;
         const todoCHelp = `\n__**${prefix}todo clear**__\nClears your todo list.`;
         const todoPHelp = `\n__**${prefix}todo private**__\nMakes your todo list private.`;
+        const calculateHelp = `\n__**${prefix}calculate**__\nCalculator.\nFor example:\n\`${prefix}calculate 1 + 2\`\n\`bot: 3\``;
         if(helpMsg.toLowerCase() == `ping`) {
             message.reply(pingHelp);
+            return;
+        }
+        if(helpMsg.toLowerCase() == `calculate`) {
+            message.reply(calculateHelp);
             return;
         }
         if(helpMsg.toLowerCase() == `todo private`) {
