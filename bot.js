@@ -395,7 +395,9 @@ bot.on('message', async (message) => {
         return;
     }
     if(message.content.toLowerCase() == `${prefix}jobs`) {
+        // eslint-disable-next-line no-undef
         LOJ = `\n__**List of jobs:**__\n\n`;
+        // eslint-disable-next-line no-undef
         message.reply(`${LOJ}`);
         return;
     }
