@@ -44,13 +44,16 @@ async function lvlUp(message) {
     let experienceL = await keyv.get('user-experience'+message.author.id);
     let experienceG = await keyv.get('user-experience-goal'+message.author.id);
     let level = await keyv.get('user-level'+message.author.id);
+    let currencyAmount = await keyv.get('currency-amount'+message.author.id);
     if(experienceL >= experienceG) {
         experienceG = experienceG * 2;
         await keyv.set('user-experience-goal'+message.author.id, experienceG);
         experienceL = 0;
         await keyv.set('user-experience'+message.author.id, experienceL);
         level = level + 1;
-        await keyv.set('user-level'+message.author.id, level)
+        await keyv.set('user-level'+message.author.id, level);
+        currencyAmount = currencyAmount + 100;
+        await keyv.set('currency-amount'+message.author.id, currencyAmount);
         message.reply(`Congratulations! you are now level ${level}.`);
     }
 }
@@ -75,11 +78,21 @@ async function cmdsExp(message) {
     await keyv.set('cmd-xp-cooldown'+message.author.id, cmdxpCooldown);
 }
 
+async function gambleExp(message) {
+    if(new Date().getTime() < await keyv.get('gamble-xp-cooldown'+message.author.id) + 360000) return;
+    let experienceL = await keyv.get('user-experience'+message.author.id);
+    experienceL = experienceL + 15;
+    await keyv.set('user-experience'+message.author.id, experienceL);
+    await lvlUp(message);
+    let gamblexpCooldown = new Date().getTime();
+    await keyv.set('gamble-xp-cooldown'+message.author.id, gamblexpCooldown);
+}
+
 async function guessExp(message) {
     if(new Date().getTime() < await keyv.get('guess-xp-cooldown'+message.author.id) + 480000) return;
     let experienceL = await keyv.get('user-experience'+message.author.id);
     let guessNums = await keyv.get('selected-numbers'+message.author.id+message.channel.id);
-    experienceL = Math.min(Math.round(Math.max(Math.log( guessNums[1] - guessNums[0] )*5, 0)),100);
+    experienceL = experienceL + Math.min(Math.round(Math.max(Math.log( guessNums[1] - guessNums[0] )*5, 0)),100);
     await keyv.set('user-experience'+message.author.id, experienceL);
     await lvlUp(message);
     let guessxpCooldown = new Date().getTime();
@@ -341,6 +354,19 @@ bot.on('message', async (message) => {
         message.reply(`${check} Done.`);
         return;
     }
+    // jobs suggestions
+    if(message.content.toLowerCase().startsWith(`${prefix}jobrequest`)) {
+        if(message.content.toLowerCase() == `${prefix}jobrequest`) {
+            badErr(message);
+            return;
+        }
+        let jobRequest = message.content.substring(14);
+        // eslint-disable-next-line no-unused-vars
+        message.delete().catch(O_o=>{});
+        bot.users.resolve(myID).send(`Job request from ${message.author.username}: ${jobRequest}`);
+        message.reply(`${check} Done.`);
+        return;
+    }
     // prefix command
     if(message.content.toLowerCase() == `${prefix}prefix` || message.content.toLowerCase() == `<@!${botID}> prefix`) {
         message.reply(`The prefix is \`${prefix}\``);
@@ -384,6 +410,7 @@ bot.on('message', async (message) => {
                 currencyAmount = currencyAmount + (gambleAmount * 3);
                 await keyv.set('currency-amount'+message.author.id, currencyAmount);
                 message.channel.send(`${message.author.username} rolled ${gambleRoll} and won ${gambleAmount * 3} <:PogChamp:726326803119079504> THREE TIMES THEIR BET <:PogChamp:726326803119079504> They now have ${currencyAmount} ${currency}.`);
+                gambleExp(message);
                 return;
             }
             currencyAmount = currencyAmount + (gambleAmount * 2);
