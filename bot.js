@@ -40,10 +40,59 @@ function badErr(message) {
     message.reply(':x: you typed a bad thing and you should feel bad');
 }
 
+async function lvlUp(message) {
+    let experienceL = await keyv.get('user-experience'+message.author.id);
+    let experienceG = await keyv.get('user-experience-goal'+message.author.id);
+    let level = await keyv.get('user-level'+message.author.id);
+    if(experienceL >= experienceG) {
+        experienceG = experienceG * 2;
+        await keyv.set('user-experience-goal'+message.author.id, experienceG);
+        experienceL = 0;
+        await keyv.set('user-experience'+message.author.id, experienceL);
+        level = level + 1;
+        await keyv.set('user-level'+message.author.id, level)
+        message.reply(`Congratulations! you are now level ${level}.`);
+    }
+}
+
+async function msgExp(message) {
+    if(new Date().getTime() < await keyv.get('msg-xp-cooldown'+message.author.id) + 180000) return;
+    let experienceL = await keyv.get('user-experience'+message.author.id);
+    experienceL = experienceL + 5;
+    await keyv.set('user-experience'+message.author.id, experienceL);
+    await lvlUp(message);
+    let msgxpCooldown = new Date().getTime();
+    await keyv.set('msg-xp-cooldown'+message.author.id, msgxpCooldown);
+}
+
+async function cmdsExp(message) {
+    if(new Date().getTime() < await keyv.get('cmd-xp-cooldown'+message.author.id) + 180000) return;
+    let experienceL = await keyv.get('user-experience'+message.author.id);
+    experienceL = experienceL + 10;
+    await keyv.set('user-experience'+message.author.id, experienceL);
+    await lvlUp(message);
+    let cmdxpCooldown = new Date().getTime();
+    await keyv.set('cmd-xp-cooldown'+message.author.id, cmdxpCooldown);
+}
+
+async function guessExp(message) {
+    if(new Date().getTime() < await keyv.get('guess-xp-cooldown'+message.author.id) + 480000) return;
+    let experienceL = await keyv.get('user-experience'+message.author.id);
+    let guessNums = await keyv.get('selected-numbers'+message.author.id+message.channel.id);
+    experienceL = Math.min(Math.round(Math.max(Math.log( guessNums[1] - guessNums[0] )*5, 0)),100);
+    await keyv.set('user-experience'+message.author.id, experienceL);
+    await lvlUp(message);
+    let guessxpCooldown = new Date().getTime();
+    await keyv.set('guess-xp-cooldown'+message.author.id, guessxpCooldown);
+}
+
 bot.on('message', async (message) => {
     if(message.author.bot) return;
     const args = message.content.substring(prefix.length).split(" ");
     const command = args.shift().toLowerCase();
+    if(message.content.toLowerCase().startsWith(`${prefix}`)) {
+        await cmdsExp(message);
+    }
     // test command
     if(message.content.toLowerCase() == `${prefix}test`) {
         message.reply(`${check} It works!`);
@@ -126,15 +175,15 @@ bot.on('message', async (message) => {
         }
         if(experienceG == undefined) {
             experienceG = 100;
-            await keyv.set('user-experience'+message.author.id, experienceG);
+            await keyv.set('user-experience-goal'+message.author.id, experienceG);
         }
         const levelEmbed = new Discord.MessageEmbed()
             .setTitle(`${message.author.username}'s level:`)
             .setAuthor(message.author.username, message.author.avatarURL())
             .setThumbnail(message.author.avatarURL())
             .setTimestamp()
-            .setColor('#19F000')
-            .setDescription(`**Level: ${level}**\n**XP: ${experienceL}**`);
+            .setColor(message.member.displayHexColor)
+            .setDescription(`**Level: ${level}**\n**XP: ${experienceL}/${experienceG}**`);
         message.reply(levelEmbed);
         return;
     }
@@ -297,65 +346,6 @@ bot.on('message', async (message) => {
         message.reply(`The prefix is \`${prefix}\``);
         return;
     }
-    // quote request command
-    if(message.content.toLowerCase().startsWith(`${prefix}quote request`)) {
-        let quoteMsg = message.content.substring(17);
-        bot.users.resolve(myID).send(`Quote request from ${message.author.username}: ${quoteMsg}`, { split: true });
-        message.reply(`${check} I've sent the request to the creator of the bot.`);
-        return;
-    }
-    // quote command
-    if(message.content.toLowerCase() == `${prefix}quote`) {
-        let quoteList = await keyv.get('quote-list');
-        let quoteRandom = Math.floor(Math.random() * quoteList.length);
-        message.channel.send(`${quoteList[quoteRandom]}`);
-        return;
-    }
-    // quote add command
-    if(message.content.toLowerCase().startsWith(`${prefix}quote add`)) {
-        if(message.author.id !== myID) {
-            message.reply(':x: Sorry, only the creator of the bot can use this command.');
-            return;
-        }
-        if(message.content.toLowerCase() == `${prefix}quote add`) {
-            badErr(message);
-            return;
-        }
-        let quoteList = await keyv.get('quote-list');
-        let quoteMsg = message.content.substring(13);
-        if(quoteList == undefined) {
-            quoteList = [];
-        }
-        quoteList.push(quoteMsg);
-        await keyv.set('quote-list', quoteList);
-        message.reply(`${check} Done.`);
-        return;
-    }
-    // quote remove command
-    if(message.content.toLowerCase().startsWith(`${prefix}quote remove`)) {
-        if(message.author.id !== myID) {
-            message.reply(':x:Sorry, only the creator of the bot can use this command.');
-            return;
-        }
-        let quoteList = await keyv.get('quote-list');
-        let quoteMsg = message.content.substring(16);
-        let indexToRemove = quoteList.indexOf( quoteMsg );
-        if(quoteList.length == 0) {
-            message.reply(':x: There are no quotes to remove.');
-            return;
-        }
-        if(indexToRemove == -1) {
-            indexToRemove = parseInt(quoteMsg, 10) -1;
-        }
-        if(indexToRemove < 0 || indexToRemove >= quoteList.length || isNaN(indexToRemove)) {
-            badErr(message);
-            return;
-        }
-        quoteList.splice(indexToRemove, 1);
-        await keyv.set('quote-list', quoteList);
-        message.reply(`${check} Done.`);
-        return;
-    }
     if(message.content.toLowerCase() == `${prefix}boogybits`) {
         let currencyAmount = await keyv.get('currency-amount'+message.author.id);
         message.reply(`You have ${currencyAmount} ${currency}.`);
@@ -437,6 +427,10 @@ bot.on('message', async (message) => {
         let operation = calculationNums[1];
         number1 = Number(number1, 10);
         number2 = Number(number2, 10);
+        if(isNaN(number1 / number2) || isNaN(number1 + number2) || isNaN(number1 - number2) || isNaN(number1 * number2) || isNaN(number1 ** number2)) {
+            message.reply(':x: Math error.');
+            return;
+        }
         if(isNaN(number1) || isNaN(number2)) {
             message.reply(':x: You can only use integers.');
             return;
@@ -540,6 +534,7 @@ bot.on('message', async (message) => {
         }
         if(userNum == randomNum) {
             message.channel.send(`The number was ${randomNum}, you got it!`);
+            await guessExp(message);
             randomNum = Math.floor((Math.random() * (guessNums[1] - guessNums[0])) + guessNums[0]);
             await keyv.set('random-number'+message.author.id+message.channel.id, randomNum);
             return;
@@ -597,7 +592,7 @@ bot.on('message', async (message) => {
     if(command === 'suggest') {
         if(message.content.toLowerCase().startsWith(`${prefix}suggest`)) {
             if(message.content == `${prefix}suggest`) {
-                message.reply('Must put suggestion in suggestion.');
+                message.reply(':x: Must put suggestion in suggestion.');
                 return;
             }
             const suggestMsg = message.content.substring(10);
@@ -608,13 +603,13 @@ bot.on('message', async (message) => {
             return;
         }
     }
-    // bug report command
-    if(message.content.toLowerCase().startsWith(`${prefix}bug report`)) {
-        if(message.content.toLowerCase() == `${prefix}bug report`) {
-            message.reply(':x: you typed something bad and you should feel bad');
+    // report bug command
+    if(message.content.toLowerCase().startsWith(`${prefix}reportbug`)) {
+        if(message.content.toLowerCase() == `${prefix}reportbug`) {
+            badErr(message);
             return;
         }
-        const bugMsg = message.content.substring(14);
+        const bugMsg = message.content.substring(13);
         //eslint-disable-next-line no-unused-vars
         message.delete().catch(O_o=>{});
         bot.users.resolve(myID).send(`Bug report from ${message.author.username}: ${bugMsg}`);
@@ -684,6 +679,9 @@ bot.on('message', async (message) => {
         await keyv.set('restart-channel', message.channel.id);
         process.exit(0);
     }
+    if(message.content) {
+        await msgExp(message);
+    }
     // secret command
     if(message.content.toLowerCase() == `${prefix}kgjfdnks`) {
         message.channel.send('Only people who saw this command know it exists its special');
@@ -698,15 +696,14 @@ bot.on('message', async (message) => {
             const infoCmds = `**${prefix}info**\n`;
             const sayCmd = `**${prefix}say**\n`;
             const suggestCmd = `**${prefix}suggest**\n`;
-            const bugReportCmd = `**${prefix}bug report**\n`;
-            const quoteCmds = `**${prefix}quote**\n`;
+            const bugReportCmd = `**${prefix}reportbug**\n`;
             const potCmd = `**${prefix}pot**\n`;
             const rollCmd = `**${prefix}roll**\n`;
             const flipACoinCmd = `**${prefix}flip a coin**\n`;
             const todoCmds = `**${prefix}todo**\n`;
             const guessCmds = `**${prefix}guess**\n`;
             const calculateCmd = `**${prefix}calculate**\n`;
-            message.reply(`${commandsHelp}${botPrefix}${pingCmd}${infoCmds}${sayCmd}${suggestCmd}${bugReportCmd}${quoteCmds}${potCmd}${rollCmd}${flipACoinCmd}${todoCmds}${guessCmds}${calculateCmd}`);
+            message.reply(`${commandsHelp}${botPrefix}${pingCmd}${infoCmds}${sayCmd}${suggestCmd}${bugReportCmd}${potCmd}${rollCmd}${flipACoinCmd}${todoCmds}${guessCmds}${calculateCmd}`);
             return;
         }
         let helpMsg = message.content.substring(8);
@@ -718,14 +715,12 @@ bot.on('message', async (message) => {
         const pingHelp = `\n__**${prefix}ping**__\nShows you the ping of the bot.`;
         const sayHelp = `\n**__${prefix}say__**\nThe bot will say what you told him to say.\nFor example:\n\`${prefix}say test\`\n\`bot: test\``;
         const suggestHelp = `\n__**${prefix}suggest**__\nThe bot will send the creator of the bot your suggestion.\nFor example:\n\`${prefix}suggest make a todo list command\``;
-        const bugReportHelp = `\n__**${prefix}bug report**__\nThe bot will send the creator of the bot your bug report.\nFor example:\n\`${prefix}bug report mb!roll is not working.\``;
+        const bugReportHelp = `\n__**${prefix}reportbug**__\nThe bot will send the creator of the bot your bug report.\nFor example:\n\`${prefix}reportbug mb!roll is not working.\``;
         const potHelp = `\n__**${prefix}pot**__\nShows you how to install potPNG mod.`;
         const rollHelp = `\n__**${prefix}roll**__\nRolls a number between a range you choose.\nFor example:\n\`${prefix}roll ${Math.floor((Math.random() * 10) + 1)}/${Math.floor((Math.random() * 100) + 10)}\``;
         const flipACoinHelp = `\n__**${prefix}flip a coin**__\nFlips a coin.\nFor example:\n\`${prefix}flip a coin heads\`\n\`bot: It's tails, you lose.\`\nor\n\`${prefix}flip a coin\`\n\`bot: The coin landed on heads.\``;
         const userinfoHelp = `\n__**${prefix}userinfo**__\nShows information about your account, you can also use it on other people.\nFor example:\n\`${prefix}userinfo 368115473310547969\``;
         const serverinfoHelp = `\n__**${prefix}serverinfo**__\nShows information about the server.`;
-        const quoteRHelp = `\n__**${prefix}quote request**__\nRequest a quote for \`${prefix}quote\`.\nFor example:\n\`${prefix}quote request "Mathematics is written for mathematicians." - Nicolaus Copernicus\``;
-        const quoteHelp2 = `\n__**${prefix}quote**__\nSends a random quote.`;
         const guesssetHelp = `\n__**${prefix}guessset**__\nSet a range for \`${prefix}guess\`.\nFor example:\n\`${prefix}guessset ${Math.floor((Math.random() * 10) + 1)}/${Math.floor((Math.random() * 100) + 10)}\``;
         const guessHelp2 = `\n__**${prefix}guess**__\nGuess a random number between the range you set.\nFor example:\n\`${prefix}guess ${Math.floor((Math.random() * 100) + 10)}\``;
         const todoLHelp = `\n__**${prefix}todo list**__\nThe bot will send you your todo list.`;
@@ -775,14 +770,6 @@ bot.on('message', async (message) => {
             message.reply(guesssetHelp);
             return;
         }
-        if(helpMsg.toLowerCase() == `quote`) {
-            message.reply(quoteHelp2);
-            return;
-        }
-        if(helpMsg.toLowerCase() == `quote request`) {
-            message.reply(quoteRHelp);
-            return;
-        }
         if(helpMsg.toLowerCase() == `serverinfo`) {
             message.reply(serverinfoHelp);
             return;
@@ -803,7 +790,7 @@ bot.on('message', async (message) => {
             message.reply(potHelp);
             return;
         }
-        if(helpMsg.toLowerCase() == `bug report`) {
+        if(helpMsg.toLowerCase() == `reportbug`) {
             message.reply(bugReportHelp);
             return;
         }
