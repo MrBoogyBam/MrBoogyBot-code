@@ -35,6 +35,11 @@ bot.on('ready', async () => {
 
 keyv.on('error', err => console.error('Keyv connection error:', err));
 
+// functions:
+function badErr(message) {
+    message.reply(':x: you typed a bad thing and you should feel bad');
+}
+
 bot.on('message', async (message) => {
     if(message.author.bot) return;
     const args = message.content.substring(prefix.length).split(" ");
@@ -156,12 +161,12 @@ bot.on('message', async (message) => {
         let todoUserID = message.content.substring(13);
         let todoUser = bot.users.resolve(todoUserID);
         if(todoUser == null) {
-            message.reply(':x: you typed a bad thing and you should feel bad');
+            badErr(message);
             return;
         }
         let todoPrivate = await keyv.get('todo-private'+todoUser.id);
         if(todoUser == undefined) {
-            message.reply(':x: you typed a bad thing and you should feel bad');
+            badErr(message);
             return;
         }
         if(todoUser == message.author.id) {
@@ -194,7 +199,7 @@ bot.on('message', async (message) => {
     // todo add command
     if(message.content.toLowerCase().startsWith(`${prefix}todo add`)) {
         if(message.content.toLowerCase() == `${prefix}todo add`) {
-            message.reply(':x: you typed a bad thing and you should feel bad');
+            badErr(message);
             return;
         }
         let todoList = await keyv.get('todo-list'+message.author.id);
@@ -209,7 +214,7 @@ bot.on('message', async (message) => {
     }
     if(message.content.toLowerCase().startsWith(`${prefix}todo change`)) {
         if(message.content.toLowerCase() == `${prefix}todo change`) {
-            message.reply(':x: you typed a bad thing and you should feel bad');
+            badErr(message);
             return;
         }
         let userTDChangeMsg = args.shift();
@@ -247,7 +252,7 @@ bot.on('message', async (message) => {
             indexToCheck = parseInt(todoMsg, 10) -1;
         }
         if(indexToCheck == isNaN(NaN)) {
-            message.reply(':x: you typed a bad thing and you should feel bad');
+            badErr(message);
             return;
         }
         todoList[indexToCheck] = "~~" + todoList[indexToCheck] + `~~ ${check}`;
@@ -268,7 +273,7 @@ bot.on('message', async (message) => {
             indexToRemove = parseInt(todoMsg, 10) - 1;
         }
         if(indexToRemove < 0 || indexToRemove >= todoList.length || isNaN(indexToRemove)) {
-            message.reply(':x: you typed a bad thing and you should feel bad');
+            badErr(message);
             return;
         }
         todoList.splice(indexToRemove, 1);
@@ -313,7 +318,7 @@ bot.on('message', async (message) => {
             return;
         }
         if(message.content.toLowerCase() == `${prefix}quote add`) {
-            message.reply(':x: you typed a bad thing and you should feel bad');
+            badErr(message);
             return;
         }
         let quoteList = await keyv.get('quote-list');
@@ -343,7 +348,7 @@ bot.on('message', async (message) => {
             indexToRemove = parseInt(quoteMsg, 10) -1;
         }
         if(indexToRemove < 0 || indexToRemove >= quoteList.length || isNaN(indexToRemove)) {
-            message.reply(':x: you typed a bad thing and you should feel bad');
+            badErr(message);
             return;
         }
         quoteList.splice(indexToRemove, 1);
@@ -358,7 +363,7 @@ bot.on('message', async (message) => {
     }
     if(message.content.toLowerCase().startsWith(`${prefix}gamble`)) {
         if(message.content.toLowerCase() == `${prefix}gamble`) {
-            message.reply(':x: you typed a bad thing and you should feel bad');
+            badErr(message);
             return;
         }
         const gambleRoll = Math.floor((Math.random() * 100) + 1);
@@ -380,7 +385,7 @@ bot.on('message', async (message) => {
             return;
         }
         if(gambleAmount <= 0) {
-            message.reply(':x: you typed a bad thing and you should feel bad');
+            badErr(message);
             return;
         }
         currencyAmount = currencyAmount - gambleAmount;
@@ -403,9 +408,7 @@ bot.on('message', async (message) => {
         return;
     }
     if(message.content.toLowerCase() == `${prefix}jobs`) {
-        // eslint-disable-next-line no-undef
-        LOJ = `\n__**List of jobs:**__\n\n`;
-        // eslint-disable-next-line no-undef
+        let LOJ = `\n__**List of jobs:**__\n\n`;
         message.reply(`${LOJ}`);
         return;
     }
@@ -425,7 +428,7 @@ bot.on('message', async (message) => {
     // calculate command
     if(message.content.toLowerCase().startsWith(`${prefix}calculate`)) {
         if(message.content.toLowerCase() == `${prefix}calculate`) {
-            message.reply(':x: you typed a bad thing and you should feel bad');
+            badErr(message);
             return;
         }
         let calculationNums = args;
@@ -483,19 +486,19 @@ bot.on('message', async (message) => {
         guessNums[1] = +guessNums[1], 10;
         let randomNum = Math.floor((Math.random() * (guessNums[1] - guessNums[0] + 1)) + guessNums[0]);
         if(guessNums[0] == Infinity || guessNums[1] == Infinity) {
-            message.reply(':x: you typed a bad thing and you should feel bad');
+            badErr(message);
             return;
         }
         if(guessNums[0] > guessNums[1]) {
-            message.reply(':x: you typed something bad and you should feel bad');
+            badErr(message);
             return;
         }
         if(guessNums.length >= 3) {
-            message.reply(':x: you typed a bad thing and you should feel bad');
+            badErr(message);
             return;
         }
         if(isNaN(guessNums[0]) || isNaN(guessNums[1])) {
-            message.reply(':x: you typed something bad and you should feel bad');
+            badErr(message);
             return;
         }
         await keyv.set('selected-numbers'+message.author.id+message.channel.id, guessNums);
@@ -509,7 +512,7 @@ bot.on('message', async (message) => {
     }
     if(message.content.toLowerCase().startsWith(`${prefix}guess`)) {
         if(message.content.toLowerCase() == `${prefix}guess`) {
-            message.reply(':x: you typed a bad thing and you should feel bad');
+            badErr(message);
             return;
         }
         let guessNums = await keyv.get('selected-numbers'+message.author.id+message.channel.id);
@@ -520,7 +523,7 @@ bot.on('message', async (message) => {
             return;
         }
         if(isNaN(userNum)) {
-            message.reply(':x: you typed a bad thing and you should feel bad');
+            badErr(message);
             return;
         }
         if(userNum < guessNums[0] || userNum > guessNums[1]) {
