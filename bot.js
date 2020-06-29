@@ -372,11 +372,26 @@ bot.on('message', async (message) => {
         message.reply(`The prefix is \`${prefix}\``);
         return;
     }
+    // jobs list command
+    if(message.content.toLowerCase() == `${prefix}jobs`) {
+        const jobsEmbed = new Discord.MessageEmbed()
+            .setTitle('__**List of jobs:**__')
+            .setDescription(`**Type \`${prefix}job\` and the job you want.**`)
+            .setTimestamp()
+            .addFields(
+                { name: "**Janitor:**", value: "Work as a Janitor\nBB6/hr" }
+            )
+            .setColor('2F3136');
+        message.reply(jobsEmbed);
+        return;
+    }
+    // boogybits command
     if(message.content.toLowerCase() == `${prefix}boogybits`) {
         let currencyAmount = await keyv.get('currency-amount'+message.author.id);
         message.reply(`You have ${currencyAmount} ${currency}.`);
         return;
     }
+    // gamble command
     if(message.content.toLowerCase().startsWith(`${prefix}gamble`)) {
         if(message.content.toLowerCase() == `${prefix}gamble`) {
             badErr(message);
@@ -424,11 +439,7 @@ bot.on('message', async (message) => {
         }
         return;
     }
-    if(message.content.toLowerCase() == `${prefix}jobs`) {
-        let LOJ = `\n__**List of jobs:**__\n\n`;
-        message.reply(`${LOJ}`);
-        return;
-    }
+    // setboogybits command (temp)
     if(message.content.toLowerCase().startsWith(`${prefix}setboogybits`)) {
         if(message.author.id !== '341076015663153153' && message.author.id !== '286600748094062602' && message.author.id !== myID) {
             message.reply(':x: you have no perms');
