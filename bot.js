@@ -47,6 +47,9 @@ async function lvlUp(message) {
     let currencyAmount = await keyv.get('currency-amount'+message.author.id);
     if(experienceL >= experienceG) {
         experienceG = experienceG * 2;
+        if(experienceG >= 10000) {
+            experienceG = 1000;
+        }
         await keyv.set('user-experience-goal'+message.author.id, experienceG);
         experienceL = 0;
         await keyv.set('user-experience'+message.author.id, experienceL);
@@ -103,6 +106,7 @@ bot.on('message', async (message) => {
     if(message.author.bot) return;
     const args = message.content.substring(prefix.length).split(" ");
     const command = args.shift().toLowerCase();
+    // command xp
     if(message.content.toLowerCase().startsWith(`${prefix}`)) {
         await cmdsExp(message);
     }
@@ -376,7 +380,7 @@ bot.on('message', async (message) => {
     if(message.content.toLowerCase() == `${prefix}jobs`) {
         const jobsEmbed = new Discord.MessageEmbed()
             .setTitle('__**List of jobs:**__')
-            .setDescription(`**Type \`${prefix}job\` and the job you want.**`)
+            .setDescription(`**Type \`${prefix}jobapply\` and the job you want.\nhr = 15m**`)
             .setTimestamp()
             .addFields(
                 { name: "**Janitor:**", value: "Work as a Janitor\nBB6/hr" }
@@ -385,6 +389,25 @@ bot.on('message', async (message) => {
         message.reply(jobsEmbed);
         return;
     }
+    if(message.content.toLowerCase().startsWith(`${prefix}jobapply`)) {
+        if(message.content.toLowerCase() == `${prefix}jobapply`) {
+            badErr(message);
+            return;
+        }
+        let userJob = await keyv.get('user-job'+message.author.id);
+        if(message.content.toLowerCase() == `${prefix}jobapply janitor`) {
+            userJob = "Janitor";
+            await keyv.set('user-job'+message.author.id, userJob);
+            message.reply(`${check} You are now a ${userJob}`);
+            return;
+        }
+    }
+    /*let userJob = await keyv.get('user-job'+message.author.id);
+    if(message.content.toLowerCase() == `${prefix}work`) {
+        if(userJob == "Janitor") {
+
+        }
+    }*/
     // boogybits command
     if(message.content.toLowerCase() == `${prefix}boogybits`) {
         let currencyAmount = await keyv.get('currency-amount'+message.author.id);
@@ -625,6 +648,12 @@ bot.on('message', async (message) => {
             message.reply(':x: You can only pick heads or tails.');
             return;
         }
+    }
+    if(message.content.toLowerCase() == `${prefix}reaction test`) {
+        const botMessage = await message.channel.send('vote i test vvv');
+        botMessage.react('👍');
+        botMessage.react('👎');
+        return
     }
     // suggest command
     if(command === 'suggest') {
