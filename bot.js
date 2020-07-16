@@ -5,7 +5,6 @@ const lmaoObamidSuck = config.lmaoObamidSuck;
 const bot = new Discord.Client();
 const Keyv = require('keyv');
 const keyv = new Keyv('sqlite://database.sqlite');
-// const ytdl = require('ytdl-core');
 // const fetch = require('node-fetch');
 const myID = '368115473310547969';
 const botID = '705103167557337258';
