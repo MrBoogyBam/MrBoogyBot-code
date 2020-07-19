@@ -10,6 +10,7 @@ const myID = '368115473310547969';
 const botID = '705103167557337258';
 const check = ':white_check_mark:';
 const currency = "BoogyBits";
+let ABCType = false;
 
 // bot ready message
 bot.on('ready', async () => {
@@ -671,6 +672,23 @@ bot.on('message', async (message) => {
         bot.users.resolve(myID).send(`Bug report from ${message.author.username}: ${bugMsg}`);
         message.reply(`${check} Your bug report has been sent.`);
         return;
+    }
+    if(message.content.toLowerCase() == `${prefix}abc`) {
+        ABCType = true;
+        message.reply('Type the English Alphabet.');
+        let ABCTime = new Date().getTime();
+        await keyv.set('abc-time'+message.channel.id, ABCTime);
+        return;
+    }
+    if(ABCType == true) {
+        if(message.content.toLowerCase() == `abcdefghijklmnopqrstuvwxyz`) {
+            let timeInMSCalABC = (new Date().getTime() - await keyv.get('abc-time'+message.channel.id));
+            let timeInSecondsABC = Math.floor(timeInMSCalABC / 1000);
+            let timeInMSABC = timeInMSCalABC % 1000
+            message.reply(`${message.author.username} typed the alphabet in ${timeInSecondsABC} seconds and ${timeInMSABC}ms.`);
+            ABCType = false;
+            return;
+        }
     }
     // potPNG mod
     const modpackDownload = `\nModpack: http://www.anjo2.com/goi/modpack.zip`;
