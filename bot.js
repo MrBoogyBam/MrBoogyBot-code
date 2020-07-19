@@ -104,7 +104,6 @@ async function guessExp(message) {
 bot.on('message', async (message) => {
     if(message.author.bot) return;
     const args = message.content.substring(prefix.length).split(" ");
-    const command = args.shift().toLowerCase();
     // command xp
     if(message.content.toLowerCase().startsWith(`${prefix}`)) {
         await cmdsExp(message);
@@ -115,19 +114,15 @@ bot.on('message', async (message) => {
         return;
     }
     // pings command
-    if(command === 'ping') {
-        if(message.content.toLowerCase() == `${prefix}ping`) {
-            const msg = await message.channel.send('🏓Pinging...');
-            msg.edit(`🏓Pong!\nLatency is ${Math.floor(msg.createdTimestamp - message.createdTimestamp)}ms`);
-            return;
-        }
+    if(message.content.toLowerCase() == `${prefix}ping`) {
+        const msg = await message.channel.send('🏓Pinging...');
+        msg.edit(`🏓Pong!\nLatency is ${Math.floor(msg.createdTimestamp - message.createdTimestamp)}ms`);
+        return;
     }
-    if(command === 'pimg') {
-        if(message.content.toLowerCase() == `${prefix}pimg`) {
-            const msgpimg = await message.channel.send('🏓Pimgimg...');
-            msgpimg.edit(`🏓Pomg!\nLatemcy is ${Math.floor(msgpimg.createdTimestamp - message.createdTimestamp)}ms`);
-            return;
-        }
+    if(message.content.toLowerCase() == `${prefix}pimg`) {
+        const msgpimg = await message.channel.send('🏓Pimgimg...');
+        msgpimg.edit(`🏓Pomg!\nLatemcy is ${Math.floor(msgpimg.createdTimestamp - message.createdTimestamp)}ms`);
+        return;
     }
     // shows information about the server
     if(message.content.toLowerCase() == `${prefix}serverinfo`) {
@@ -516,18 +511,15 @@ bot.on('message', async (message) => {
         }
     }
     // say command
-    if(command === 'say') {
-        if(message.content.toLowerCase().startsWith(`${prefix}say`) == true) {
-            if(message.content.toLowerCase() == `${prefix}say`) {
-                message.channel.send('_ _');
-                return;
-            }
-            const sayMsg = message.content.substring(6);
-            //eslint-disable-next-line no-unused-vars
-             message.delete().catch(O_o=>{});
-            message.channel.send(sayMsg);
+    if(message.content.toLowerCase().startsWith(`${prefix}say`) == true) {
+        if(message.content.toLowerCase() == `${prefix}say`) {
+            message.channel.send('_ _');
             return;
         }
+        const sayMsg = message.content.substring(6);
+        //eslint-disable-next-line no-unused-vars
+        message.delete().catch(O_o=>{});
+        message.channel.send(sayMsg);
         return;
     }
     if(message.content.toLowerCase().startsWith(`${prefix}guessset`)) {
@@ -655,19 +647,17 @@ bot.on('message', async (message) => {
         return
     }
     // suggest command
-    if(command === 'suggest') {
-        if(message.content.toLowerCase().startsWith(`${prefix}suggest`)) {
-            if(message.content == `${prefix}suggest`) {
-                message.reply(':x: Must put suggestion in suggestion.');
-                return;
-            }
-            const suggestMsg = message.content.substring(10);
-            //eslint-disable-next-line no-unused-vars
-            message.delete().catch(O_o=>{});
-            bot.users.resolve(`${myID}`).send(`Suggestion from ${message.author}: ${suggestMsg}`);
-            message.reply('Your suggestion has been sent.');
+    if(message.content.toLowerCase().startsWith(`${prefix}suggest`)) {
+        if(message.content == `${prefix}suggest`) {
+            message.reply(':x: Must put suggestion in suggestion.');
             return;
         }
+        const suggestMsg = message.content.substring(10);
+        //eslint-disable-next-line no-unused-vars
+        message.delete().catch(O_o=>{});
+        bot.users.resolve(`${myID}`).send(`Suggestion from ${message.author}: ${suggestMsg}`);
+        message.reply('Your suggestion has been sent.');
+        return;
     }
     // report bug command
     if(message.content.toLowerCase().startsWith(`${prefix}reportbug`)) {
@@ -721,6 +711,34 @@ bot.on('message', async (message) => {
         rollNums[1] = +rollNums[1], 10;
         let randomRoll = Math.floor((Math.random() * (rollNums[1] - rollNums[0] + 1)) + rollNums[0]);
         message.reply(`Your number is ${randomRoll}`);
+        return;
+    }
+    if(message.content.toLowerCase() == `${prefix}dog`) {
+        const randomDogAPI = await (await fetch("https://random.dog/woof")).text();
+        const randomDog = Discord.MessageAttachment(randomDogAPI);
+        message.channel.send(randomDog);
+        return;
+    }
+    // random word test
+    if(message.content.toLowerCase() == `${prefix}random test`) {
+        const randomWord = await (await fetch("https://random-word-api.herokuapp.com/word?number=1&swear=0")).json();
+        if(randomWord.includes('nigga' || 'nigger')) {
+            message.channel.send(`:x: Something went wrong, please try again.`);
+            return;
+        }
+        let RWTime = new Date().getTime();
+        let RWChannelID = message.channel.id;
+        await keyv.set('random-word-channel', RWChannelID);
+        await keyv.set('random-word-time'+message.channel.id, RWTime);
+        await keyv.set('random-word'+message.channel.id, (await message.channel.send(randomWord)).content);
+        return;
+    }
+    if(message.content.toLowerCase() == await keyv.get('random-word'+message.channel.id)) {
+        let timeInMSCalRW = (new Date().getTime() - await keyv.get('random-word-time'+message.channel.id));
+        let timeInSecondsRW = Math.floor(timeInMSCalRW / 1000);
+        let timeInMSRW = timeInMSCalRW % 1000;
+        message.channel.send(`${message.author.username} typed the word in ${timeInSecondsRW} seconds and ${timeInMSRW}ms`);
+        await keyv.delete('random-word'+message.channel.id);
         return;
     }
     // YEP COCK
