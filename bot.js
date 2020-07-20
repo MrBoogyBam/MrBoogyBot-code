@@ -733,7 +733,12 @@ bot.on('message', async (message) => {
     }
     if(message.content.toLowerCase() == `${prefix}dog`) {
         const randomDogAPI = await (await fetch("https://random.dog/woof")).text();
-        const randomDog = Discord.MessageAttachment(randomDogAPI);
+        if(randomDogAPI.includes('mp4')) {
+            message.channel.send(':x: Sorry, something went wrong, please try again.');
+            return;
+        }
+        const randomDogL = `https://random.dog/${randomDogAPI}`;
+        const randomDog = new Discord.MessageAttachment(randomDogL);
         message.channel.send(randomDog);
         return;
     }
