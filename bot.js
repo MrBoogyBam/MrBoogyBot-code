@@ -745,7 +745,8 @@ bot.on('message', async (message) => {
     }
     if(message.content.toLowerCase() == `${prefix}cat`) {
         const randomCatAPI = await (await fetch('https://api.thecatapi.com/v1/images/search')).json();
-        console.log(randomCatAPI);
+        let randomCat = new Discord.MessageAttachment(randomCatAPI[0].url);
+        message.channel.send(randomCat);
         return;
     }
     // random word test
