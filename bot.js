@@ -731,6 +731,7 @@ bot.on('message', async (message) => {
         message.reply(`Your number is ${randomRoll}`);
         return;
     }
+    // dog command
     if(message.content.toLowerCase() == `${prefix}dog`) {
         const randomDogAPI = await (await fetch("https://random.dog/woof")).text();
         if(randomDogAPI.includes('mp4')) {
@@ -740,6 +741,11 @@ bot.on('message', async (message) => {
         const randomDogL = `https://random.dog/${randomDogAPI}`;
         const randomDog = new Discord.MessageAttachment(randomDogL);
         message.channel.send(randomDog);
+        return;
+    }
+    if(message.content.toLowerCase() == `${prefix}cat`) {
+        const randomCatAPI = await (await fetch('https://api.thecatapi.com/v1/images/search')).json;
+        console.log(randomCatAPI);
         return;
     }
     // random word test
@@ -810,7 +816,8 @@ bot.on('message', async (message) => {
             const todoCmds = `**${prefix}todo**\n`;
             const guessCmds = `**${prefix}guess**\n`;
             const calculateCmd = `**${prefix}calculate**\n`;
-            message.reply(`${commandsHelp}${botPrefix}${pingCmd}${infoCmds}${sayCmd}${suggestCmd}${bugReportCmd}${potCmd}${rollCmd}${flipACoinCmd}${todoCmds}${guessCmds}${calculateCmd}`);
+            const dogCmd = `**${prefix}dog**\n`;
+            message.reply(`${commandsHelp}${botPrefix}${pingCmd}${infoCmds}${sayCmd}${suggestCmd}${bugReportCmd}${potCmd}${rollCmd}${flipACoinCmd}${todoCmds}${guessCmds}${calculateCmd}${dogCmd}`);
             return;
         }
         let helpMsg = message.content.substring(8);
@@ -837,8 +844,13 @@ bot.on('message', async (message) => {
         const todoCHelp = `\n__**${prefix}todo clear**__\nClears your todo list.`;
         const todoPHelp = `\n__**${prefix}todo private**__\nMakes your todo list private.`;
         const calculateHelp = `\n__**${prefix}calculate**__\nCalculator.\nFor example:\n\`${prefix}calculate 1 + 2\`\n\`bot: 3\``;
+        const dogHelp = `\n__**${prefix}dog**__\nSends a random image of a dog.\n`
         if(helpMsg.toLowerCase() == `ping`) {
             message.reply(pingHelp);
+            return;
+        }
+        if(helpMsg.toLowerCase() == `dog`) {
+            message.reply(dogHelp);
             return;
         }
         if(helpMsg.toLowerCase() == `calculate`) {
