@@ -743,6 +743,7 @@ bot.on('message', async (message) => {
         message.channel.send(randomDog);
         return;
     }
+    // cat command
     if(message.content.toLowerCase() == `${prefix}cat`) {
         const randomCatAPI = await (await fetch('https://api.thecatapi.com/v1/images/search')).json();
         let randomCat = new Discord.MessageAttachment(randomCatAPI[0].url);
