@@ -744,12 +744,12 @@ bot.on('message', async (message) => {
         return;
     }
     if(message.content.toLowerCase() == `${prefix}cat`) {
-        const randomCatAPI = await (await fetch('https://api.thecatapi.com/v1/images/search')).json;
+        const randomCatAPI = await (await fetch('https://api.thecatapi.com/v1/images/search')).json();
         console.log(randomCatAPI);
         return;
     }
     // random word test
-    if(message.content.toLowerCase() == `${prefix}random test`) {
+    if(message.content.toLowerCase() == `${prefix}random word`) {
         const randomWord = await (await fetch("https://random-word-api.herokuapp.com/word?number=1&swear=0")).json();
         if(randomWord.includes('nigga' || 'nigger')) {
             message.channel.send(`:x: Something went wrong, please try again.`);
