@@ -734,7 +734,7 @@ bot.on('message', async (message) => {
     // dog command
     if(message.content.toLowerCase() == `${prefix}dog`) {
         const randomDogAPI = await (await fetch("https://random.dog/woof")).text();
-        if(randomDogAPI.includes('mp4')) {
+        if(randomDogAPI.includes('.mp4')) {
             message.channel.send(':x: Sorry, something went wrong, please try again.');
             return;
         }
