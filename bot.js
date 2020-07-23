@@ -105,6 +105,7 @@ async function guessExp(message) {
 bot.on('message', async (message) => {
     if(message.author.bot) return;
     const args = message.content.substring(prefix.length).split(" ");
+    args.shift();
     // command xp
     if(message.content.toLowerCase().startsWith(`${prefix}`)) {
         await cmdsExp(message);
@@ -733,15 +734,21 @@ bot.on('message', async (message) => {
     }
     // dog command
     if(message.content.toLowerCase() == `${prefix}dog`) {
-        const randomDogAPI = await (await fetch("https://random.dog/woof")).text();
-        if(randomDogAPI.includes('.mp4')) {
-            message.channel.send(':x: Sorry, something went wrong, please try again.');
+        if(Math.random() < 0.5) {
+            message.channel.startTyping();
+            const randomDogAPI = await (await fetch("https://random.dog/woof.json")).json();
+            const randomDog = new Discord.MessageAttachment(randomDogAPI.url);
+            message.channel.send(randomDog);
+            message.channel.stopTyping();
+            return;
+        } else {
+            message.channel.startTyping();
+            const randomDogAPI = await (await fetch("https://api.thedogapi.com/v1/images/search?size=med&mime_types=jpg&format=json&has_breeds=true&order=RANDOM&page=0&limit=1")).json();
+            const randomDog = new Discord.MessageAttachment(randomDogAPI[0].url);
+            message.channel.send(randomDog);
+            message.channel.stopTyping();
             return;
         }
-        const randomDogL = `https://random.dog/${randomDogAPI}`;
-        const randomDog = new Discord.MessageAttachment(randomDogL);
-        message.channel.send(randomDog);
-        return;
     }
     // cat command
     if(message.content.toLowerCase() == `${prefix}cat`) {
