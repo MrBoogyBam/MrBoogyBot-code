@@ -595,12 +595,7 @@ bot.on('message', async (message) => {
         }
         return;
     }
-    // bot will agree with cumpet
-    if(message.content.toLowerCase().startsWith("_")) {
-        if(message.author.id !== '391725558062383105') return;
-        message.channel.send('I agree with <@!391725558062383105>');
-        return;
-    }
+    // flip a coin command
     if(message.content.toLowerCase().startsWith(`${prefix}flip a coin`)) {
         if(message.content.toLowerCase() == `${prefix}flip a coin`) {
             let sides = [ "heads", "tails" ];
@@ -641,12 +636,6 @@ bot.on('message', async (message) => {
             message.reply(':x: You can only pick heads or tails.');
             return;
         }
-    }
-    if(message.content.toLowerCase() == `${prefix}reaction test`) {
-        const botMessage = await message.channel.send('vote i test vvv');
-        botMessage.react('👍');
-        botMessage.react('👎');
-        return
     }
     // suggest command
     if(message.content.toLowerCase().startsWith(`${prefix}suggest`)) {
