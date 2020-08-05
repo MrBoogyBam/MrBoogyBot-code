@@ -641,7 +641,8 @@ bot.on('message', async (message) => {
         //let reminderTime = args
         let number = args[0];
         let tUnit = args[1];
-        console.log(args[1]);
+        let rmMsg = args[2];
+        if(tUnit == seconds)
         return;
     }
     // flip a coin command
