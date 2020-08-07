@@ -640,9 +640,84 @@ bot.on('message', async (message) => {
     if(message.content.toLowerCase().startsWith(`${prefix}remindme`)) {
         //let reminderTime = args
         let number = args[0];
-        let tUnit = args[1];
-        let rmMsg = args[2];
-        if(tUnit == seconds)
+        let tUnit = {
+            seconds: 1000,
+            minutes: 1000 * 60,
+            hours: 1000 * 60 * 60,
+            days: 1000 * 60 * 60 * 24
+        }
+        let rmMsgL = message.url;
+        if(isNaN(number)) {
+            badErr(message);
+            return;
+        }
+        if(tUnit == "seconds") {
+            number = number * tUnit["seconds"];
+            return;
+        } else if(tUnit == "minutes") {
+            number = number * tUnit["minutes"];
+            return;
+        } else if(tUnit == "hours") {
+            number = number * tUnit["hours"];
+            return;
+        } else if(tUnit == "days") {
+            number = number * tUnit["days"];
+        }
+        return;
+    }
+    if(message.content.toLowerCase() == `${prefix}edited`) {
+        let editedMsg = await message.channel.send('i');
+        await editedMsg.edit('‫my message ‫i');
+        return;
+    }
+    // inspiration command
+    if(message.content.toLowerCase() == `${prefix}inspiration`) {
+        message.channel.startTyping();
+        let insAPI = await (await fetch("https://inspirobot.me/api?generate=true&oy=vey")).text();
+        let insQ = new Discord.MessageAttachment(insAPI);
+        message.channel.send(insQ);
+        message.channel.stopTyping();
+        return;
+    }
+    if(message.content.toLowerCase() == `${prefix}rps`) {
+        let rps = ["rock", "paper", "scissors"];
+        let rpsRNG = Math.floor(Math.random() * rps.length);
+        let botChoice = rps[rpsRNG];
+        let botChoiceN = rps.indexOf(botChoice);
+        let rpsChan = message.channel;
+        let filter = m => m.author.id === message.author.id;
+        let colCounter = 1;
+        let msgCollector = new Discord.MessageCollector(rpsChan, filter);
+        message.channel.send('Pick one: rock, paper or scissors');
+        // eslint-disable-next-line no-unused-vars
+        msgCollector.on('collect', async(message, collect) => {
+            colCounter = colCounter++;
+            if(colCounter == 1) {
+                if(message.content.toLowerCase() !== "rock" && message.content.toLowerCase() !== "paper" && message.content.toLowerCase() !== "scissors") {
+                    message.channel.send(':x: You have to pick rock, paper or scissors.');
+                    return;
+                }
+                let userChoice = message.content.toLowerCase();
+                await keyv.set('rps-user-choice', userChoice);
+                let userChoiceN = rps.indexOf(userChoice);
+                await keyv.set('rps-user-choice-number', userChoiceN);
+                msgCollector.stop();
+            }
+        });
+        msgCollector.on('end', async collected => {
+            let userChoice = await keyv.get('rps-user-choice');
+            let userChoiceN = await keyv.get('rps-user-choice-number');
+            if(userChoice == botChoice) {
+                message.channel.send(`${botChoice}, It's a tie.`);
+                return;
+            } else if( (userChoiceN + 1) % 3 == botChoiceN) {
+                message.channel.send(`${botChoice}, I win!`);
+                return;
+            } else {
+                message.channel.send(`${botChoice}, You win!`);
+                return;
+            }
+        });
         return;
     }
     // flip a coin command
