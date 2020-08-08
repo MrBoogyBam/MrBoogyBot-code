@@ -595,48 +595,6 @@ bot.on('message', async (message) => {
         }
         return;
     }
-    if(message.content.toLowerCase() == `${prefix}hangman`) {
-        let host = bot.users.resolve(message.author.id);
-        let hostDM = await message.author.createDM();
-        let colCounter = 0;
-        let filter = m => m.author.id === message.author.id;
-        const msgCollector = new Discord.MessageCollector(hostDM, filter);
-        message.reply(`I've sent you a DM to setup this game.`);
-        host.send('What do you want the topic to be?');
-        // eslint-disable-next-line no-unused-vars
-        msgCollector.on('collect', async(message, collect) => {
-            colCounter++;
-            if(colCounter == 1) {
-                let topic = message.content;
-                await keyv.set('hangman-topic', topic);
-                host.send(`What do you want the word to be?`);
-            }
-            if(colCounter == 2) {
-                let wordC = message.content;
-                let topic = await keyv.get('hangman-topic');
-                await keyv.set('hangman-word', wordC);
-                host.send(`Topic: ${topic}\nWord: ${wordC}`);
-                msgCollector.stop();
-            }
-        });
-
-        // eslint-disable-next-line no-unused-vars
-        msgCollector.on('end', async collected => {
-            let topic = await keyv.get('hangman-topic')
-            let wordC = await keyv.get('hangman-word');
-            let wordL = wordC.length;
-            let word = "";
-            for(let i = 0; i < wordL; i++) {
-                if(wordC.charAt(i) == " ") {
-                    word = word + "    ";
-                    continue;
-                }
-                word = word + "___ ";
-            }
-            let hangmanMsg = message.channel.send(`\`\`\`\n                                          The topic is: ${topic}\n                                          The word has ${wordC.length} letters (including spaces)\n\n\n\n\n\n\n\n                 ${word}\`\`\``);
-        });
-        return;
-    }
     if(message.content.toLowerCase().startsWith(`${prefix}remindme`)) {
         //let reminderTime = args
         let number = args[0];
@@ -704,6 +662,7 @@ bot.on('message', async (message) => {
                 msgCollector.stop();
             }
         });
+        // eslint-disable-next-line no-unused-vars
         msgCollector.on('end', async collected => {
             let userChoice = await keyv.get('rps-user-choice');
             let userChoiceN = await keyv.get('rps-user-choice-number');
