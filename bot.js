@@ -623,6 +623,7 @@ bot.on('message', async (message) => {
         }
         return;
     }
+    // i (edited) my message
     if(message.content.toLowerCase() == `${prefix}edited`) {
         let editedMsg = await message.channel.send('i');
         await editedMsg.edit('‫my message ‫i');
@@ -637,6 +638,7 @@ bot.on('message', async (message) => {
         message.channel.stopTyping();
         return;
     }
+    // rock paper scissors
     if(message.content.toLowerCase() == `${prefix}rps`) {
         let rps = ["rock", "paper", "scissors"];
         let rpsRNG = Math.floor(Math.random() * rps.length);
