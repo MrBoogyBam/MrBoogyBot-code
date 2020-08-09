@@ -611,15 +611,17 @@ bot.on('message', async (message) => {
         }
         if(tUnit == "seconds") {
             number = number * tUnit["seconds"];
-            return;
+            await keyv.set('remindme-time'+message.author.id, number);
         } else if(tUnit == "minutes") {
             number = number * tUnit["minutes"];
-            return;
+            await keyv.set('remindme-time'+message.author.id, number);
         } else if(tUnit == "hours") {
             number = number * tUnit["hours"];
-            return;
+            await keyv.set('remindme-time'+message.author.id, number);
         } else if(tUnit == "days") {
             number = number * tUnit["days"];
+            await keyv.set('remindme-time'+message.author.id, number);
+            console.log(number);
         }
         return;
     }
@@ -680,6 +682,10 @@ bot.on('message', async (message) => {
             }
         });
         return;
+    }
+    if(message.content.toLowerCase() == `${prefix}cardjitsu` || message.content.toLowerCase() == `${prefix}card jitsu`) {
+        let cards = [ "fire", "water", "ice" ];
+        let cardNumbers = [ "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12" ];
     }
     // flip a coin command
     if(message.content.toLowerCase().startsWith(`${prefix}flip a coin`)) {
