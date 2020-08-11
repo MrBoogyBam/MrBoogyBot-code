@@ -9,7 +9,6 @@ const fetch = require('node-fetch');
 const myID = '368115473310547969';
 const botID = '705103167557337258';
 const check = ':white_check_mark:';
-const currency = "BoogyBits";
 let ABCType = false;
 
 // bot ready message
@@ -25,7 +24,7 @@ bot.on('ready', async () => {
     const timeInMSCal = (new Date().getTime() - await keyv.get('restart-time'));
     const timeInSeconds = Math.floor(timeInMSCal / 1000);
     const timeInMS = timeInMSCal % 1000;
-    if(timeInSeconds <2) {
+    if(timeInSeconds == 1) {
         theChannel.send(`Done! Bot restarted in ${timeInSeconds} second and ${timeInMS}ms`);
         return;
     }
@@ -36,70 +35,9 @@ bot.on('ready', async () => {
 keyv.on('error', err => console.error('Keyv connection error:', err));
 
 // functions:
+
 function badErr(message) {
     message.reply(':x: you typed a bad thing and you should feel bad');
-}
-
-async function lvlUp(message) {
-    let experienceL = await keyv.get('user-experience'+message.author.id);
-    let experienceG = await keyv.get('user-experience-goal'+message.author.id);
-    let level = await keyv.get('user-level'+message.author.id);
-    let currencyAmount = await keyv.get('currency-amount'+message.author.id);
-    if(experienceL >= experienceG) {
-        experienceG = experienceG * 2;
-        if(experienceG >= 10000) {
-            experienceG = 1000;
-        }
-        await keyv.set('user-experience-goal'+message.author.id, experienceG);
-        experienceL = 0;
-        await keyv.set('user-experience'+message.author.id, experienceL);
-        level = level + 1;
-        await keyv.set('user-level'+message.author.id, level);
-        currencyAmount = currencyAmount + 100;
-        await keyv.set('currency-amount'+message.author.id, currencyAmount);
-        message.reply(`Congratulations! you are now level ${level}.`);
-    }
-}
-
-async function msgExp(message) {
-    if(new Date().getTime() < await keyv.get('msg-xp-cooldown'+message.author.id) + 180000) return;
-    let experienceL = await keyv.get('user-experience'+message.author.id);
-    experienceL = experienceL + 5;
-    await keyv.set('user-experience'+message.author.id, experienceL);
-    await lvlUp(message);
-    let msgxpCooldown = new Date().getTime();
-    await keyv.set('msg-xp-cooldown'+message.author.id, msgxpCooldown);
-}
-
-async function cmdsExp(message) {
-    if(new Date().getTime() < await keyv.get('cmd-xp-cooldown'+message.author.id) + 180000) return;
-    let experienceL = await keyv.get('user-experience'+message.author.id);
-    experienceL = experienceL + 10;
-    await keyv.set('user-experience'+message.author.id, experienceL);
-    await lvlUp(message);
-    let cmdxpCooldown = new Date().getTime();
-    await keyv.set('cmd-xp-cooldown'+message.author.id, cmdxpCooldown);
-}
-
-async function gambleExp(message) {
-    if(new Date().getTime() < await keyv.get('gamble-xp-cooldown'+message.author.id) + 360000) return;
-    let experienceL = await keyv.get('user-experience'+message.author.id);
-    experienceL = experienceL + 15;
-    await keyv.set('user-experience'+message.author.id, experienceL);
-    await lvlUp(message);
-    let gamblexpCooldown = new Date().getTime();
-    await keyv.set('gamble-xp-cooldown'+message.author.id, gamblexpCooldown);
-}
-
-async function guessExp(message) {
-    if(new Date().getTime() < await keyv.get('guess-xp-cooldown'+message.author.id) + 480000) return;
-    let experienceL = await keyv.get('user-experience'+message.author.id);
-    let guessNums = await keyv.get('selected-numbers'+message.author.id+message.channel.id);
-    experienceL = experienceL + Math.min(Math.round(Math.max(Math.log( guessNums[1] - guessNums[0] )*5, 0)),100);
-    await keyv.set('user-experience'+message.author.id, experienceL);
-    await lvlUp(message);
-    let guessxpCooldown = new Date().getTime();
-    await keyv.set('guess-xp-cooldown'+message.author.id, guessxpCooldown);
 }
 
 bot.on('message', async (message) => {
@@ -107,20 +45,18 @@ bot.on('message', async (message) => {
     const args = message.content.substring(prefix.length).split(" ");
     args.shift();
     // command xp
-    if(message.content.toLowerCase().startsWith(`${prefix}`)) {
-        await cmdsExp(message);
-    }
     // test command
     if(message.content.toLowerCase() == `${prefix}test`) {
         message.reply(`${check} It works!`);
         return;
     }
-    // pings command
+    // ping command
     if(message.content.toLowerCase() == `${prefix}ping`) {
         const msg = await message.channel.send('🏓Pinging...');
         msg.edit(`🏓Pong!\nLatency is ${Math.floor(msg.createdTimestamp - message.createdTimestamp)}ms`);
         return;
     }
+    // pimg command
     if(message.content.toLowerCase() == `${prefix}pimg`) {
         const msgpimg = await message.channel.send('🏓Pimgimg...');
         msgpimg.edit(`🏓Pomg!\nLatemcy is ${Math.floor(msgpimg.createdTimestamp - message.createdTimestamp)}ms`);
@@ -172,32 +108,6 @@ bot.on('message', async (message) => {
             .setThumbnail(UserID.avatarURL())
             .setTimestamp();
         message.channel.send(userInfoEmbedID);
-        return;
-    }
-    if(message.content.toLowerCase() == `${prefix}level`) {
-        let level = await keyv.get('user-level'+message.author.id);
-        let experienceL = await keyv.get('user-experience'+message.author.id);
-        let experienceG = await keyv.get('user-experience-goal'+message.author.id);
-        if(level == undefined) {
-            level = 0;
-            await keyv.set('user-level'+message.author.id, level);
-        }
-        if(experienceL == undefined) {
-            experienceL = 0;
-            await keyv.set('user-experience'+message.author.id, experienceL);
-        }
-        if(experienceG == undefined) {
-            experienceG = 100;
-            await keyv.set('user-experience-goal'+message.author.id, experienceG);
-        }
-        const levelEmbed = new Discord.MessageEmbed()
-            .setTitle(`${message.author.username}'s level:`)
-            .setAuthor(message.author.username, message.author.avatarURL())
-            .setThumbnail(message.author.avatarURL())
-            .setTimestamp()
-            .setColor(message.member.displayHexColor)
-            .setDescription(`**Level: ${level}**\n**XP: ${experienceL}/${experienceG}**`);
-        message.reply(levelEmbed);
         return;
     }
     // todo list command
@@ -258,6 +168,10 @@ bot.on('message', async (message) => {
         message.channel.send(`**__${todoUser.username}'s todo list:__**\n`+todoList.map((item, i) => (i + 1) + ". " + item).join("\n"), {split: true});
         return;
     }
+    if(message.content.toLowerCase() == `${prefix}todo`) {
+        message.reply(`\`${prefix}todo\` is not a command, type \`${prefix}todo help\` for a list of todo commands.`);
+        return;
+    }
     // todo add command
     if(message.content.toLowerCase().startsWith(`${prefix}todo add`)) {
         if(message.content.toLowerCase() == `${prefix}todo add`) {
@@ -272,15 +186,6 @@ bot.on('message', async (message) => {
         todoList.push(todoMsg);
         message.reply(`${check} Done.`);
         await keyv.set('todo-list'+message.author.id, todoList);
-        return;
-    }
-    if(message.content.toLowerCase().startsWith(`${prefix}todo change`)) {
-        if(message.content.toLowerCase() == `${prefix}todo change`) {
-            badErr(message);
-            return;
-        }
-        let userTDChangeMsg = args.shift();
-        console.log(userTDChangeMsg);
         return;
     }
     // todo private command
@@ -305,172 +210,10 @@ bot.on('message', async (message) => {
         }
         return;
     }
-    // todo check command (unfinished)
-    if(message.content.toLowerCase().startsWith(`${prefix}todo check`)) {
-        let todoMsg = message.content.substring(14);
-        let todoList = await keyv.get('todo-list'+message.author.id);
-        let indexToCheck = todoList.indexOf( todoMsg );
-        if(indexToCheck == -1) {
-            indexToCheck = parseInt(todoMsg, 10) -1;
-        }
-        if(indexToCheck == isNaN(NaN)) {
-            badErr(message);
-            return;
-        }
-        todoList[indexToCheck] = "~~" + todoList[indexToCheck] + `~~ ${check}`;
-        await keyv.set('todo-list'+message.author.id, todoList);
-        message.reply(`${check} Done.`);
-        return;
-    }
-    // todo remove command
-    if(message.content.toLowerCase().startsWith(`${prefix}todo remove`)) {
-        let todoMsg = message.content.substring(15);
-        let todoList = await keyv.get('todo-list'+message.author.id);
-        let indexToRemove = todoList.indexOf( todoMsg );
-        if(todoList.length == 0) {
-            message.reply(':x: There is nothing to remove from your todo list.');
-            return;
-        }
-        if(indexToRemove == -1) {
-            indexToRemove = parseInt(todoMsg, 10) - 1;
-        }
-        if(indexToRemove < 0 || indexToRemove >= todoList.length || isNaN(indexToRemove)) {
-            badErr(message);
-            return;
-        }
-        todoList.splice(indexToRemove, 1);
-        await keyv.set('todo-list'+message.author.id, todoList);
-        message.reply(`${check} Done.`);
-        return;
-    }
-    // todo clear command
-    if(message.content.toLowerCase() == `${prefix}todo clear`) {
-        let todoList = keyv.get('todo-list'+message.author.id);
-        if(todoList.length == 0) {
-            message.reply(':x: Your todo list is already empty.');
-            return;
-        }
-        keyv.delete('todo-list'+message.author.id);
-        message.reply(`${check} Done.`);
-        return;
-    }
-    // jobs suggestions
-    if(message.content.toLowerCase().startsWith(`${prefix}jobrequest`)) {
-        if(message.content.toLowerCase() == `${prefix}jobrequest`) {
-            badErr(message);
-            return;
-        }
-        let jobRequest = message.content.substring(14);
-        // eslint-disable-next-line no-unused-vars
-        message.delete().catch(O_o=>{});
-        bot.users.resolve(myID).send(`Job request from ${message.author.username}: ${jobRequest}`);
-        message.reply(`${check} Done.`);
-        return;
-    }
     // prefix command
     if(message.content.toLowerCase() == `${prefix}prefix` || message.content.toLowerCase() == `<@!${botID}> prefix`) {
         message.reply(`The prefix is \`${prefix}\``);
         return;
-    }
-    // jobs list command
-    if(message.content.toLowerCase() == `${prefix}jobs`) {
-        const jobsEmbed = new Discord.MessageEmbed()
-            .setTitle('__**List of jobs:**__')
-            .setDescription(`**Type \`${prefix}jobapply\` and the job you want.\nhr = 15m**`)
-            .setTimestamp()
-            .addFields(
-                { name: "**Janitor:**", value: "Work as a Janitor\nBB6/hr" }
-            )
-            .setColor('2F3136');
-        message.reply(jobsEmbed);
-        return;
-    }
-    if(message.content.toLowerCase().startsWith(`${prefix}jobapply`)) {
-        if(message.content.toLowerCase() == `${prefix}jobapply`) {
-            badErr(message);
-            return;
-        }
-        let userJob = await keyv.get('user-job'+message.author.id);
-        if(message.content.toLowerCase() == `${prefix}jobapply janitor`) {
-            userJob = "Janitor";
-            await keyv.set('user-job'+message.author.id, userJob);
-            message.reply(`${check} You are now a ${userJob}`);
-            return;
-        }
-    }
-    /*let userJob = await keyv.get('user-job'+message.author.id);
-    if(message.content.toLowerCase() == `${prefix}work`) {
-        if(userJob == "Janitor") {
-
-        }
-    }*/
-    // boogybits command
-    if(message.content.toLowerCase() == `${prefix}boogybits`) {
-        let currencyAmount = await keyv.get('currency-amount'+message.author.id);
-        message.reply(`You have ${currencyAmount} ${currency}.`);
-        return;
-    }
-    // gamble command
-    if(message.content.toLowerCase().startsWith(`${prefix}gamble`)) {
-        if(message.content.toLowerCase() == `${prefix}gamble`) {
-            badErr(message);
-            return;
-        }
-        const gambleRoll = Math.floor((Math.random() * 100) + 1);
-        let currencyAmount = await keyv.get('currency-amount'+message.author.id);
-        let gambleAmount = args[0];
-        if(gambleAmount == "all") {
-            gambleAmount = currencyAmount;
-        }
-        gambleAmount = parseInt(gambleAmount, 10);
-        if(currencyAmount == undefined) {
-            currencyAmount = 0;
-        }
-        if(gambleAmount > currencyAmount) {
-            message.reply(`:x: You don't have enough ${currency}.`);
-            return;
-        }
-        if(isNaN(gambleAmount)) {
-            message.reply(':x: You can only use integers');
-            return;
-        }
-        if(gambleAmount <= 0) {
-            badErr(message);
-            return;
-        }
-        currencyAmount = currencyAmount - gambleAmount;
-        if(gambleRoll > 60) {
-            if(gambleRoll == 69 || gambleRoll == 99 || gambleRoll == 100) {
-                currencyAmount = currencyAmount + (gambleAmount * 3);
-                await keyv.set('currency-amount'+message.author.id, currencyAmount);
-                message.channel.send(`${message.author.username} rolled ${gambleRoll} and won ${gambleAmount * 3} <:PogChamp:726326803119079504> THREE TIMES THEIR BET <:PogChamp:726326803119079504> They now have ${currencyAmount} ${currency}.`);
-                gambleExp(message);
-                return;
-            }
-            currencyAmount = currencyAmount + (gambleAmount * 2);
-            await keyv.set('currency-amount'+message.author.id, currencyAmount);
-            message.channel.send(`${message.author.username} rolled ${gambleRoll} and won ${gambleAmount * 2} <:PogChamp:726326803119079504> They now have ${currencyAmount} ${currency}.`);
-            return;
-        } else if(gambleRoll <= 60) {
-            await keyv.set('currency-amount'+message.author.id, currencyAmount);
-            message.channel.send(`${message.author.username} rolled ${gambleRoll} and lost ${gambleAmount} <:LUL:726332433670340628> They now have ${currencyAmount} ${currency}.`);
-            return;
-        }
-        return;
-    }
-    // setboogybits command (temp)
-    if(message.content.toLowerCase().startsWith(`${prefix}setboogybits`)) {
-        if(message.author.id !== '341076015663153153' && message.author.id !== '286600748094062602' && message.author.id !== myID) {
-            message.reply(':x: you have no perms');
-            return;
-        } else {
-            let currencyS = args[0];
-            currencyS = parseInt(currencyS, 10);
-            let currencyAmount = currencyS;
-            await keyv.set('currency-amount'+message.author.id, currencyAmount);
-            message.reply(`${check} Done.`);
-            return;
-        }
     }
     // calculate command
     if(message.content.toLowerCase().startsWith(`${prefix}calculate`)) {
@@ -588,7 +331,6 @@ bot.on('message', async (message) => {
         }
         if(userNum == randomNum) {
             message.channel.send(`The number was ${randomNum}, you got it!`);
-            await guessExp(message);
             randomNum = Math.floor((Math.random() * (guessNums[1] - guessNums[0])) + guessNums[0]);
             await keyv.set('random-number'+message.author.id+message.channel.id, randomNum);
             return;
@@ -598,31 +340,27 @@ bot.on('message', async (message) => {
     if(message.content.toLowerCase().startsWith(`${prefix}remindme`)) {
         //let reminderTime = args
         let number = args[0];
-        let tUnit = {
+        let unitAmounts = {
             seconds: 1000,
             minutes: 1000 * 60,
             hours: 1000 * 60 * 60,
             days: 1000 * 60 * 60 * 24
         }
-        let rmMsgL = message.url;
+        let tUnit = args[1];
+        let rmMsgL = await keyv.get('remind-msg-url'+message.author.id);
+        if(rmMsgL == undefined) {
+            rmMsgL = message.url;
+        }
+        await keyv.set('remind-msg-url'+message.author.id, rmMsgL);
         if(isNaN(number)) {
             badErr(message);
             return;
         }
-        if(tUnit == "seconds") {
-            number = number * tUnit["seconds"];
-            await keyv.set('remindme-time'+message.author.id, number);
-        } else if(tUnit == "minutes") {
-            number = number * tUnit["minutes"];
-            await keyv.set('remindme-time'+message.author.id, number);
-        } else if(tUnit == "hours") {
-            number = number * tUnit["hours"];
-            await keyv.set('remindme-time'+message.author.id, number);
-        } else if(tUnit == "days") {
-            number = number * tUnit["days"];
-            await keyv.set('remindme-time'+message.author.id, number);
-            console.log(number);
-        }
+        number = number * unitAmounts[tUnit];
+        await keyv.set('remindme-number'+message.author.id, number);
+        setTimeout(() => {
+            message.author.send(`reminder: ${rmMsgL}`);
+        }, number);
         return;
     }
     // i (edited) my message
@@ -838,8 +576,8 @@ bot.on('message', async (message) => {
         message.channel.send(randomCat);
         return;
     }
-    // random word test
-    if(message.content.toLowerCase() == `${prefix}random word`) {
+    // random word command
+    if(message.content.toLowerCase() == `${prefix}randomword` || message.content.toLowerCase() == `${prefix}random word`) {
         const randomWord = await (await fetch("https://random-word-api.herokuapp.com/word?number=1&swear=0")).json();
         if(randomWord.includes('nigga' || 'nigger')) {
             message.channel.send(`:x: Something went wrong, please try again.`);
@@ -860,16 +598,6 @@ bot.on('message', async (message) => {
         await keyv.delete('random-word'+message.channel.id);
         return;
     }
-    // YEP COCK
-    if(message.content == 'YEP') {
-        message.channel.send('COCK');
-        return;
-    }
-    // COCK YEP
-    if(message.content == 'COCK') {
-        message.channel.send('YEP');
-        return;
-    }
     // restart command
     if(message.content.toLowerCase() == `${prefix}restart`) {
         if(message.author.id !== `${myID}`) {
@@ -881,14 +609,6 @@ bot.on('message', async (message) => {
         await keyv.set('restart-server', message.guild.id);
         await keyv.set('restart-channel', message.channel.id);
         process.exit(0);
-    }
-    if(message.content) {
-        await msgExp(message);
-    }
-    // secret command
-    if(message.content.toLowerCase() == `${prefix}kgjfdnks`) {
-        message.channel.send('Only people who saw this command know it exists its special');
-        return;
     }
     // help command
     if(message.content.toLowerCase().startsWith(`${prefix}help`)) {
@@ -911,7 +631,7 @@ bot.on('message', async (message) => {
             return;
         }
         let helpMsg = message.content.substring(8);
-        const typeHelp = `\n__**Type \`${prefix}help command\` to see what the command does.**__\n`;
+        const typeHelp = `\n**Some of the commands were deleted**\n\n__**Type \`${prefix}help command\` to see what the command does.**__\n`;
         const todoHelp = `${typeHelp}**__${prefix}todo commands__**\n\n**${prefix}todo list**\n**${prefix}todo add**\n**${prefix}todo remove**\n**${prefix}todo clear**\n**${prefix}todo private**\n**${prefix}todo check**`;
         const quoteHelp = `${typeHelp}**__${prefix}quote commands__**\n\n**${prefix}quote request**\n**${prefix}quote**`;
         const guessHelp = `${typeHelp}**__${prefix}guess commands__**\n\n**${prefix}guessset**\n**${prefix}guess**`;
