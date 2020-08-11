@@ -613,7 +613,7 @@ bot.on('message', async (message) => {
     // help command
     if(message.content.toLowerCase().startsWith(`${prefix}help`)) {
         if(message.content.toLowerCase() == `${prefix}help`) {
-            const commandsHelp = `\n__**Type \`${prefix}help command\` to see what the command does.**__\n`;
+            const commandsHelp = `\n**Some of the commands were deleted**\n\n__**Type \`${prefix}help command\` to see what the command does.**__\n`;
             const botPrefix = `**${prefix}** - Bot's prefix\n\n`;
             const pingCmd = `**${prefix}ping**\n`;
             const infoCmds = `**${prefix}info**\n`;
@@ -631,7 +631,7 @@ bot.on('message', async (message) => {
             return;
         }
         let helpMsg = message.content.substring(8);
-        const typeHelp = `\n**Some of the commands were deleted**\n\n__**Type \`${prefix}help command\` to see what the command does.**__\n`;
+        const typeHelp = `\n__**Type \`${prefix}help command\` to see what the command does.**__\n`;
         const todoHelp = `${typeHelp}**__${prefix}todo commands__**\n\n**${prefix}todo list**\n**${prefix}todo add**\n**${prefix}todo remove**\n**${prefix}todo clear**\n**${prefix}todo private**\n**${prefix}todo check**`;
         const quoteHelp = `${typeHelp}**__${prefix}quote commands__**\n\n**${prefix}quote request**\n**${prefix}quote**`;
         const guessHelp = `${typeHelp}**__${prefix}guess commands__**\n\n**${prefix}guessset**\n**${prefix}guess**`;
