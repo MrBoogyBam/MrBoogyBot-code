@@ -6,7 +6,6 @@ const bot = new Discord.Client();
 const Keyv = require('keyv');
 const keyv = new Keyv('sqlite://database.sqlite');
 const fetch = require('node-fetch');
-const myID = '368115473310547969';
 const botID = '705103167557337258';
 const check = ':white_check_mark:';
 const functionsF = require('./src/functions.js');
@@ -16,8 +15,12 @@ const randomwordF = require('./src/commands/fun/randomword.js');
 const restartF = require('./src/commands/misc/restart.js');
 const serverinfoF = require('./src/commands/useful/serverinfo.js');
 const userinfoF = require('./src/commands/useful/userinfo.js');
+const flipacoinF = require('./src/commands/fun/flipacoin.js');
+const suggestF = require('./src/commands/misc/suggest.js');
+const reportbugF = require('./src/commands/useful/report.js');
+const abcF = require('./src/commands/fun/abc.js');
+const abcData = abcF.abcData;
 const badErr = functionsF.badErr;
-let ABCType = false;
 
 // bot ready message
 bot.on('ready', async () => {
@@ -417,86 +420,26 @@ bot.on('message', async (message) => {
     }
     // flip a coin command
     if(message.content.toLowerCase().startsWith(`${prefix}flip a coin`)) {
-        if(message.content.toLowerCase() == `${prefix}flip a coin`) {
-            let sides = [ "heads", "tails" ];
-            let side = Math.floor(Math.random() * sides.length);
-            if(side == 0) {
-                message.reply(`The coin landed on heads.`);
-                return;
-            }
-            if(side == 1) {
-                message.reply(`The coin landed on tails.`);
-                return;
-            }
-        }
-        let coinUsrChoice = message.content.substring(15);
-        let sides = [ "heads", "tails" ];
-        let side = Math.floor(Math.random() * sides.length);
-        if(coinUsrChoice == sides[0]) {
-            if(side == 0) {
-                message.reply(`It's heads, you win!`);
-                return;
-            }
-            if(side == 1) {
-                message.reply(`It's tails, you lose.`);
-                return;
-            }
-        }
-        if(coinUsrChoice == sides[1]) {
-            if(side == 0) {
-                message.reply(`It's heads, you lose.`);
-                return;
-            }
-            if(side == 1) {
-                message.reply(`It's tails, you win!`);
-                return;
-            }
-        }
-        if(coinUsrChoice !== sides[0] || coinUsrChoice !== sides[1]) {
-            message.reply(':x: You can only pick heads or tails.');
-            return;
-        }
+        await flipacoinF.flipacoinCmd(message);
+        return
     }
     // suggest command
     if(message.content.toLowerCase().startsWith(`${prefix}suggest`)) {
-        if(message.content == `${prefix}suggest`) {
-            message.reply(':x: Must put suggestion in suggestion.');
-            return;
-        }
-        const suggestMsg = message.content.substring(10);
-        //eslint-disable-next-line no-unused-vars
-        message.delete().catch(O_o=>{});
-        bot.users.resolve(`${myID}`).send(`Suggestion from ${message.author}: ${suggestMsg}`);
-        message.reply('Your suggestion has been sent.');
+        await suggestF.suggestCmd(message);
         return;
     }
     // report bug command
-    if(message.content.toLowerCase().startsWith(`${prefix}reportbug`)) {
-        if(message.content.toLowerCase() == `${prefix}reportbug`) {
-            badErr(message);
-            return;
-        }
-        const bugMsg = message.content.substring(13);
-        //eslint-disable-next-line no-unused-vars
-        message.delete().catch(O_o=>{});
-        bot.users.resolve(myID).send(`Bug report from ${message.author.username}: ${bugMsg}`);
-        message.reply(`${check} Your bug report has been sent.`);
+    if(message.content.toLowerCase().startsWith(`${prefix}reportbug` || message.content.toLowerCase() == `${prefix}bugreport` || message.content.toLowerCase() == `${prefix}report bug` || message.cotnent.toLowerCase() == `${prefix}bug report`)) {
+        await reportbugF.reportbugCmd(message);
         return;
     }
     if(message.content.toLowerCase() == `${prefix}abc`) {
-        ABCType = true;
-        message.reply('Type the English Alphabet.');
-        let ABCTime = new Date().getTime();
-        await keyv.set('abc-time'+message.channel.id, ABCTime);
+        await abcF.abcCmd(message);
         return;
     }
-    if(ABCType == true) {
+    if(abcData.ABCType == true) {
         if(message.content.toLowerCase() == `abcdefghijklmnopqrstuvwxyz`) {
-            let timeInMSCalABC = (new Date().getTime() - await keyv.get('abc-time'+message.channel.id));
-            let timeInSecondsABC = Math.floor(timeInMSCalABC / 1000);
-            let timeInMSABC = timeInMSCalABC % 1000
-            message.reply(`${message.author.username} typed the alphabet in ${timeInSecondsABC} seconds and ${timeInMSABC}ms.`);
-            ABCType = false;
+            await abcF.abcCmd2(message);
             return;
         }
     }

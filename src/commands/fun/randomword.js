@@ -1,4 +1,3 @@
-const Discord = require('discord.js');
 const fetch = require('node-fetch');
 const Keyv = require('keyv');
 const keyv = new Keyv('sqlite://database.sqlite');
