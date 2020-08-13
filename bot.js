@@ -9,6 +9,14 @@ const fetch = require('node-fetch');
 const myID = '368115473310547969';
 const botID = '705103167557337258';
 const check = ':white_check_mark:';
+const functionsF = require('./src/functions.js');
+const dogF = require('./src/commands/fun/dog.js');
+const catF = require('./src/commands/fun/cat.js');
+const randomwordF = require('./src/commands/fun/randomword.js');
+const restartF = require('./src/commands/misc/restart.js');
+const serverinfoF = require('./src/commands/useful/serverinfo.js');
+const userinfoF = require('./src/commands/useful/userinfo.js');
+const badErr = functionsF.badErr;
 let ABCType = false;
 
 // bot ready message
@@ -34,12 +42,6 @@ bot.on('ready', async () => {
 
 keyv.on('error', err => console.error('Keyv connection error:', err));
 
-// functions:
-
-function badErr(message) {
-    message.reply(':x: you typed a bad thing and you should feel bad');
-}
-
 bot.on('message', async (message) => {
     if(message.author.bot) return;
     const args = message.content.substring(prefix.length).split(" ");
@@ -62,52 +64,12 @@ bot.on('message', async (message) => {
         msgpimg.edit(`🏓Pomg!\nLatemcy is ${Math.floor(msgpimg.createdTimestamp - message.createdTimestamp)}ms`);
         return;
     }
-    // shows information about the server
     if(message.content.toLowerCase() == `${prefix}serverinfo`) {
-        if(message.channel.type == 'dm') {
-            message.channel.send(`Sorry, this command can only work in a server.`);
-            return;
-        }
-        const serverInfoEmbed = new Discord.MessageEmbed()
-            .setColor(`#00ffff`)
-            .setTitle('Server information')
-            .setAuthor(message.guild.name, message.guild.iconURL())
-            .setDescription(`Server name: ${message.guild.name}\nTotal members: ${message.guild.memberCount}\nServer ID: ${message.guild.id}\nCreated at: ${message.guild.createdAt.toUTCString()}`)
-            .setImage(message.guild.iconURL())
-            .setThumbnail(message.guild.iconURL())
-            .setTimestamp();
-        message.channel.send(serverInfoEmbed);
+        await serverinfoF.serverinfoCmd(message);
         return;
     }
-    // shows information about the user
     if(message.content.toLowerCase().startsWith(`${prefix}userinfo`)) {
-        const userInfoEmbed = new Discord.MessageEmbed()
-            .setColor(message.member.displayHexColor)
-            .setTitle('User information')
-            .setAuthor(message.author.username, message.author.avatarURL())
-            .setDescription(`User tag: ${message.author.tag}\nUser ID: ${message.author.id}\nCreated at: ${message.author.createdAt.toUTCString()}`)
-            .setImage(message.author.avatarURL())
-            .setThumbnail(message.author.avatarURL())
-            .setTimestamp();
-        if(message.content.toLowerCase() == `${prefix}userinfo`) {
-            message.channel.send(userInfoEmbed);
-            return;
-        }
-        const MsgUsrID = message.content.substring(12);
-        const UserID = bot.users.resolve(`${MsgUsrID}`)
-        if(UserID == null) {
-            message.reply(':x: User was not found.');
-            return;
-        }
-        const userInfoEmbedID = new Discord.MessageEmbed()
-            .setColor(UserID.displayHexColor)
-            .setTitle('User information')
-            .setAuthor(UserID.username, UserID.avatarURL())
-            .setDescription(`User tag: ${UserID.tag}\nUser ID: ${UserID.id}\nCreated at: ${UserID.createdAt.toUTCString()}`)
-            .setImage(UserID.avatarURL())
-            .setThumbnail(UserID.avatarURL())
-            .setTimestamp();
-        message.channel.send(userInfoEmbedID);
+        await userinfoF.userinfoCmd(message);
         return;
     }
     // todo list command
@@ -579,64 +541,24 @@ bot.on('message', async (message) => {
         message.reply(`Your number is ${randomRoll}`);
         return;
     }
-    // dog command
     if(message.content.toLowerCase() == `${prefix}dog`) {
-        if(Math.random() < 0.5) {
-            message.channel.startTyping();
-            const randomDogAPI = await (await fetch("https://random.dog/woof.json")).json();
-            const randomDog = new Discord.MessageAttachment(randomDogAPI.url);
-            message.channel.send(randomDog);
-            message.channel.stopTyping();
-            return;
-        } else {
-            message.channel.startTyping();
-            const randomDogAPI = await (await fetch("https://api.thedogapi.com/v1/images/search?size=med&mime_types=jpg&format=json&has_breeds=true&order=RANDOM&page=0&limit=1")).json();
-            const randomDog = new Discord.MessageAttachment(randomDogAPI[0].url);
-            message.channel.send(randomDog);
-            message.channel.stopTyping();
-            return;
-        }
-    }
-    // cat command
-    if(message.content.toLowerCase() == `${prefix}cat`) {
-        const randomCatAPI = await (await fetch('https://api.thecatapi.com/v1/images/search')).json();
-        let randomCat = new Discord.MessageAttachment(randomCatAPI[0].url);
-        message.channel.send(randomCat);
+        await dogF.dogCmd(message);
         return;
     }
-    // random word command
+    if(message.content.toLowerCase() == `${prefix}cat`) {
+        await catF.catCmd(message);
+        return;
+    }
     if(message.content.toLowerCase() == `${prefix}randomword` || message.content.toLowerCase() == `${prefix}random word`) {
-        const randomWord = await (await fetch("https://random-word-api.herokuapp.com/word?number=1&swear=0")).json();
-        if(randomWord.includes('nigga' || 'nigger')) {
-            message.channel.send(`:x: Something went wrong, please try again.`);
-            return;
-        }
-        let RWTime = new Date().getTime();
-        let RWChannelID = message.channel.id;
-        await keyv.set('random-word-channel', RWChannelID);
-        await keyv.set('random-word-time'+message.channel.id, RWTime);
-        await keyv.set('random-word'+message.channel.id, (await message.channel.send(randomWord)).content);
+        await randomwordF.randomwordCmd(message);
         return;
     }
     if(message.content.toLowerCase() == await keyv.get('random-word'+message.channel.id)) {
-        let timeInMSCalRW = (new Date().getTime() - await keyv.get('random-word-time'+message.channel.id));
-        let timeInSecondsRW = Math.floor(timeInMSCalRW / 1000);
-        let timeInMSRW = timeInMSCalRW % 1000;
-        message.channel.send(`${message.author.username} typed the word in ${timeInSecondsRW} seconds and ${timeInMSRW}ms`);
-        await keyv.delete('random-word'+message.channel.id);
+        await randomwordF.randomwordW(message);
         return;
     }
-    // restart command
     if(message.content.toLowerCase() == `${prefix}restart`) {
-        if(message.author.id !== `${myID}` && message.author.id !== '388027536417882124' && message.author.id !== '341076015663153153') {
-            message.reply(`Only the creator of the bot can use this command.`);
-            return;
-        }
-        await keyv.set('restart-message', (await message.channel.send('Restarting... <a:loading:721573242686668861>')).id);
-        await keyv.set('restart-time', new Date().getTime());
-        await keyv.set('restart-server', message.guild.id);
-        await keyv.set('restart-channel', message.channel.id);
-        process.exit(0);
+        await restartF.restartCmd(message);
     }
     // help command
     if(message.content.toLowerCase().startsWith(`${prefix}help`)) {
