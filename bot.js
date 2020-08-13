@@ -169,7 +169,7 @@ bot.on('message', async (message) => {
         return;
     }
     if(message.content.toLowerCase() == `${prefix}todo`) {
-        message.reply(`\`${prefix}todo\` is not a command, type \`${prefix}todo help\` for a list of todo commands.`);
+        message.reply(`\`${prefix}todo\` is not a command, type \`${prefix}help todo\` for a list of todo commands.`);
         return;
     }
     // todo add command
@@ -186,6 +186,27 @@ bot.on('message', async (message) => {
         todoList.push(todoMsg);
         message.reply(`${check} Done.`);
         await keyv.set('todo-list'+message.author.id, todoList);
+        return;
+    }
+    // todo remove command
+    if(message.content.toLowerCase().startsWith(`${prefix}todo remove`)) {
+        let todoMsg = message.content.substring(15);
+        let todoList = await keyv.get('todo-list'+message.author.id);
+        let indexToRemove = todoList.indexOf( todoMsg );
+        if(todoList.length == 0) {
+            message.reply(':x: There is nothing to remove from your todo list.');
+            return;
+        }
+        if(indexToRemove == -1) {
+            indexToRemove = parseInt(todoMsg, 10) - 1;
+        }
+        if(indexToRemove < 0 || indexToRemove >= todoList.length || isNaN(indexToRemove)) {
+            badErr(message);
+            return;
+        }
+        todoList.splice(indexToRemove, 1);
+        await keyv.set('todo-list'+message.author.id, todoList);
+        message.reply(`${check} Done.`);
         return;
     }
     // todo private command
@@ -341,26 +362,33 @@ bot.on('message', async (message) => {
         //let reminderTime = args
         let number = args[0];
         let unitAmounts = {
+            second: 1000,
             seconds: 1000,
+            minute: 1000 * 60,
             minutes: 1000 * 60,
+            hour: 1000 * 60 * 60,
             hours: 1000 * 60 * 60,
-            days: 1000 * 60 * 60 * 24
+            day: 1000 * 60 * 60 * 24,
+            days: 1000 * 60 * 60 * 24,
+            week: 1000 * 60 * 60 * 24 * 7,
+            weeks: 1000 * 60 * 60 * 24 * 7,
+            month: 1000 * 60 * 60 * 24 * 30,
+            months: 1000 * 60 * 60 * 24 * 30,
+            year: 1000 * 60 * 60 * 24 * 365,
+            years: 1000 * 60 * 60 * 24 * 365
         }
         let tUnit = args[1];
-        let rmMsgL = await keyv.get('remind-msg-url'+message.author.id);
-        if(rmMsgL == undefined) {
-            rmMsgL = message.url;
-        }
-        await keyv.set('remind-msg-url'+message.author.id, rmMsgL);
-        if(isNaN(number)) {
+        let rmMsgL = message.url;
+        if(isNaN(number) || unitAmounts[args[1]] == undefined) {
             badErr(message);
             return;
         }
         number = number * unitAmounts[tUnit];
-        await keyv.set('remindme-number'+message.author.id, number);
+        console.log(number);
         setTimeout(() => {
             message.author.send(`reminder: ${rmMsgL}`);
         }, number);
+        message.reply(`${check} Okay.`);
         return;
     }
     // i (edited) my message
@@ -600,7 +628,7 @@ bot.on('message', async (message) => {
     }
     // restart command
     if(message.content.toLowerCase() == `${prefix}restart`) {
-        if(message.author.id !== `${myID}`) {
+        if(message.author.id !== `${myID}` && message.author.id !== '388027536417882124') {
             message.reply(`Only the creator of the bot can use this command.`);
             return;
         }
