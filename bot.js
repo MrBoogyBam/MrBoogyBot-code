@@ -20,6 +20,9 @@ const suggestF = require('./src/commands/misc/suggest.js');
 const reportbugF = require('./src/commands/useful/report.js');
 const abcF = require('./src/commands/fun/abc.js');
 const abcData = abcF.abcData;
+const potF = require('./src/commands/useful/pot.js');
+const rollF = require('./src/commands/fun/roll.js');
+const invalidF = require('./src/commands/misc/invalid.js');
 const badErr = functionsF.badErr;
 
 // bot ready message
@@ -49,7 +52,6 @@ bot.on('message', async (message) => {
     if(message.author.bot) return;
     const args = message.content.substring(prefix.length).split(" ");
     args.shift();
-    // command xp
     // test command
     if(message.content.toLowerCase() == `${prefix}test`) {
         message.reply(`${check} It works!`);
@@ -418,17 +420,14 @@ bot.on('message', async (message) => {
         let cards = [ "fire", "water", "ice" ];
         let cardNumbers = [ "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12" ];
     }
-    // flip a coin command
     if(message.content.toLowerCase().startsWith(`${prefix}flip a coin`)) {
         await flipacoinF.flipacoinCmd(message);
         return
     }
-    // suggest command
     if(message.content.toLowerCase().startsWith(`${prefix}suggest`)) {
         await suggestF.suggestCmd(message);
         return;
     }
-    // report bug command
     if(message.content.toLowerCase().startsWith(`${prefix}reportbug` || message.content.toLowerCase() == `${prefix}bugreport` || message.content.toLowerCase() == `${prefix}report bug` || message.cotnent.toLowerCase() == `${prefix}bug report`)) {
         await reportbugF.reportbugCmd(message);
         return;
@@ -443,45 +442,32 @@ bot.on('message', async (message) => {
             return;
         }
     }
-    // potPNG mod
-    const modpackDownload = `\nModpack: http://www.anjo2.com/goi/modpack.zip`;
-    const potDownloads = `__**PotPNG Mod**__\nModpack: http://www.anjo2.com/goi/modpack.zip\npotPNG: https://mega.nz/file/10MlUaDJ#eH0ECXpGFhIZblwSkTdw80FP2b-6E3iEdmiWndHDsxo\n\n`;
-    const potHowToDownload = `__**How to install the potPNG mod**__\n1. Open steam.\n2. Go to library.\n3. Right click on Getting Over It.\n4. Click on properties.\n5. Go to Local Files.\n6. Click on "Browse Local Files"\n7. Open the PotPng.zip file.\n8. Drag the GettingOverIt_Data folder into the Getting Over It folder.\n9. Click on "Replace the files in the destination".\n10. Open the game.`;
-    const modpackHowToDownload = `__**How to install the modpack**__\n1. Open steam.\n2. Go to library\n3. Right click on Getting Over It.\n4. Click on properties.\n5. Go to Local Files\n6. Click on "Browse Local Files".\n7. Drag all the files from the modpack.zip file to the Getting Over It folder.\n8. Open the game.`;
-    const potInstructions = `__**How to make a custom pot**__\n1. Open steam.\n2. Go to library\n3. Right click on Getting Over It.\n4. Click on properties.\n5. Go to Local Files.\n6. Click on "Browse Local Files".\n7. Open the GettingOverIt_Data folder\n8. Open StreamingAssets folder.\n9. Open pots folder.\n10. Open PotLayout (With GIMP/Photoshop)\n11. Make a new pot.\n12. Export your pot.\n13. Rename the pot to "pot"\n14. Drag the potPNG you created into StreamingAssets folder.\n15. Open the game.`;
     if(message.content.toLowerCase() == `${prefix}pot`) {
-        message.reply(`__**PotPNG mod**__\n\nPot commands:\n**${prefix}potdownload**\n**${prefix}modpackdownload**\n**${prefix}potdownload instructions**\n**${prefix}modpackdownload instructions**\n**${prefix}pot instructions**`);
+        await potF.potCmd(message);
         return;
     }
-    if(message.content.toLowerCase() == `${prefix}potdownload`) {
-        message.reply(potDownloads);
+    if(message.content.toLowerCase() == `${prefix}potdownload` || message.content.toLowerCase() == `${prefix}pot download`) {
+        await potF.potDownloadsF(message);
         return;
     }
-    if(message.content.toLowerCase() == `${prefix}pot instructions`) {
-        message.reply(potInstructions)
+    if(message.content.toLowerCase() == `${prefix}pot instructions` || message.content.toLowerCase() == `${prefix}potinstructions`) {
+        await potF.potInstructionsF(message);
         return;
     }
-    if(message.content.toLowerCase() == `${prefix}potdownload instructions`) {
-        message.reply(potHowToDownload);
+    if(message.content.toLowerCase() == `${prefix}potdownload instructions` || message.content.toLowerCase() == `${prefix}pot download instructions`) {
+        await potF.potHowToDownloadF(message);
         return;
     }
-    if(message.content.toLowerCase() == `${prefix}modpackdownload`) {
-        message.reply(modpackDownload);
+    if(message.content.toLowerCase() == `${prefix}modpackdownload` || message.content.toLowerCase() == `${prefix}modpack download`) {
+        await potF.modpackDownloadF(message);
         return;
     }
-    if(message.content.toLowerCase() == `${prefix}modpackdownload instructions`) {
-        message.reply(modpackHowToDownload);
+    if(message.content.toLowerCase() == `${prefix}modpackdownload instructions` || message.content.toLowerCase() == `${prefix}modpack download instructions`) {
+        await potF.modpackHowToDownloadF(message);
         return;
     }
     if(message.content.toLowerCase().startsWith(`${prefix}roll`)) {
-        if(message.content.toLowerCase() == `${prefix}roll`) {
-            message.reply(`:x: You have to set a range. For example: \`${prefix}roll ${Math.floor((Math.random() * 10) + 1)}/${Math.floor((Math.random() * 100) + 10)}\``);
-        }
-        let rollNums = args.shift().split("/");
-        rollNums[0] = +rollNums[0], 10;
-        rollNums[1] = +rollNums[1], 10;
-        let randomRoll = Math.floor((Math.random() * (rollNums[1] - rollNums[0] + 1)) + rollNums[0]);
-        message.reply(`Your number is ${randomRoll}`);
+        await rollF.rollCmd(message);
         return;
     }
     if(message.content.toLowerCase() == `${prefix}dog`) {
@@ -645,9 +631,8 @@ bot.on('message', async (message) => {
             return;
         }
     }
-    // if a command is invalid
     if(message.content.toLowerCase().startsWith(`${prefix}`)) {
-        message.reply(`Invalid command. Type \`${prefix}help\` for a list of commands.`);
+        await invalidF.invalidErr(message);
         return;
     }
 });
