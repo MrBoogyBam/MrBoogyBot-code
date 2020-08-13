@@ -628,7 +628,7 @@ bot.on('message', async (message) => {
     }
     // restart command
     if(message.content.toLowerCase() == `${prefix}restart`) {
-        if(message.author.id !== `${myID}` && message.author.id !== '388027536417882124') {
+        if(message.author.id !== `${myID}` && message.author.id !== '388027536417882124' && message.author.id !== '341076015663153153') {
             message.reply(`Only the creator of the bot can use this command.`);
             return;
         }
