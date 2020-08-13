@@ -1,6 +1,6 @@
 const Discord = require('discord.js');
 const bot = new Discord.Client;
-const config = require("./config.json");
+const config = require('../../../config.json');
 const prefix = config.prefix;
 
 async function userinfoCmd(message) {
