@@ -5,7 +5,6 @@ const lmaoObamidSuck = config.lmaoObamidSuck;
 const bot = new Discord.Client();
 const Keyv = require('keyv');
 const keyv = new Keyv('sqlite://database.sqlite');
-const fetch = require('node-fetch');
 const botID = '705103167557337258';
 const check = ':white_check_mark:';
 const functionsF = require('./src/functions.js');
@@ -23,6 +22,13 @@ const abcData = abcF.abcData;
 const potF = require('./src/commands/useful/pot.js');
 const rollF = require('./src/commands/fun/roll.js');
 const invalidF = require('./src/commands/misc/invalid.js');
+const rpsF = require('./src/commands/fun/rps.js');
+const inspirationF = require('./src/commands/fun/inspiration.js');
+const editedF = require('./src/commands/boring/edited.js');
+const remindmeF = require('./src/commands/useful/remindme.js');
+const guessF = require('./src/commands/fun/guess.js');
+const sayF = require('./src/commands/fun/say.js');
+const calculateF = require('./src/commands/useful/calculate.js');
 const badErr = functionsF.badErr;
 
 // bot ready message
@@ -205,217 +211,39 @@ bot.on('message', async (message) => {
     }
     // calculate command
     if(message.content.toLowerCase().startsWith(`${prefix}calculate`)) {
-        if(message.content.toLowerCase() == `${prefix}calculate`) {
-            badErr(message);
-            return;
-        }
-        let calculationNums = args;
-        let number1 = calculationNums[0];
-        let number2 = calculationNums[2];
-        let operation = calculationNums[1];
-        number1 = Number(number1, 10);
-        number2 = Number(number2, 10);
-        if(isNaN(number1 / number2) || isNaN(number1 + number2) || isNaN(number1 - number2) || isNaN(number1 * number2) || isNaN(number1 ** number2)) {
-            message.reply(':x: Math error.');
-            return;
-        }
-        if(isNaN(number1) || isNaN(number2)) {
-            message.reply(':x: You can only use integers.');
-            return;
-        }
-        if(operation == "+") {
-            message.reply(number1 + number2);
-            return;
-        } else if (operation == "-") {
-            message.reply(number1 - number2);
-            return;
-        } else if (operation == "*" || operation == "x") {
-            message.reply(number1 * number2);
-            return;
-        } else if (operation == "/" || operation == ":" || operation == "÷") {
-            message.reply(number1 / number2);
-            return;
-        } else if (operation == "^") {
-            message.reply(number1 ** number2);
-            return;
-        } else {
-            message.reply(':x: That is not an operation.');
-            return;
-        }
+        await calculateF.calculateCmd(message);
+        return;
     }
     // say command
     if(message.content.toLowerCase().startsWith(`${prefix}say`) == true) {
-        if(message.content.toLowerCase() == `${prefix}say`) {
-            message.channel.send('_ _');
-            return;
-        }
-        const sayMsg = message.content.substring(6);
-        //eslint-disable-next-line no-unused-vars
-        message.delete().catch(O_o=>{});
-        message.channel.send(sayMsg);
+        await sayF.sayCmd(message);
         return;
     }
     if(message.content.toLowerCase().startsWith(`${prefix}guessset`)) {
-        if(message.content.toLowerCase() == `${prefix}guessset`) {
-            message.reply(':x: You have to set a range.');
-            return;
-        }
-        let guessNums = args.shift().split("/");
-        guessNums[0] = +guessNums[0], 10;
-        guessNums[1] = +guessNums[1], 10;
-        let randomNum = Math.floor((Math.random() * (guessNums[1] - guessNums[0] + 1)) + guessNums[0]);
-        if(guessNums[0] == Infinity || guessNums[1] == Infinity) {
-            badErr(message);
-            return;
-        }
-        if(guessNums[0] > guessNums[1]) {
-            badErr(message);
-            return;
-        }
-        if(guessNums.length >= 3) {
-            badErr(message);
-            return;
-        }
-        if(isNaN(guessNums[0]) || isNaN(guessNums[1])) {
-            badErr(message);
-            return;
-        }
-        await keyv.set('selected-numbers'+message.author.id+message.channel.id, guessNums);
-        await keyv.set('random-number'+message.author.id+message.channel.id, randomNum);
-        if(guessNums[0] <= -1000000 || guessNums[1] >= 1000000) {
-            message.reply(`${check} glhf`);
-            return;
-        }
-        message.reply(`${check} Done.`);
+        await guessF.guesssetCmd(message);
         return;
     }
     if(message.content.toLowerCase().startsWith(`${prefix}guess`)) {
-        if(message.content.toLowerCase() == `${prefix}guess`) {
-            badErr(message);
-            return;
-        }
-        let guessNums = await keyv.get('selected-numbers'+message.author.id+message.channel.id);
-        let randomNum = await keyv.get('random-number'+message.author.id+message.channel.id);
-        let userNum = message.content.substring(8);
-        if(!guessNums) {
-            message.reply(`You have to set the number first by using \`${prefix}guessset\``);
-            return;
-        }
-        if(isNaN(userNum)) {
-            badErr(message);
-            return;
-        }
-        if(userNum < guessNums[0] || userNum > guessNums[1]) {
-            message.reply(`Your number has to be between ${guessNums[0]}-${guessNums[1]}`);
-            return;
-        }
-        if(userNum < randomNum) {
-            message.channel.send(`The number is higher than ${userNum}`);
-            return;
-        }
-        if(userNum > randomNum) {
-            message.channel.send(`The number is lower than ${userNum}`);
-            return;
-        }
-        if(userNum == randomNum) {
-            message.channel.send(`The number was ${randomNum}, you got it!`);
-            randomNum = Math.floor((Math.random() * (guessNums[1] - guessNums[0])) + guessNums[0]);
-            await keyv.set('random-number'+message.author.id+message.channel.id, randomNum);
-            return;
-        }
+        await guessF.guessCmd(message);
         return;
     }
     if(message.content.toLowerCase().startsWith(`${prefix}remindme`)) {
-        //let reminderTime = args
-        let number = args[0];
-        let unitAmounts = {
-            second: 1000,
-            seconds: 1000,
-            minute: 1000 * 60,
-            minutes: 1000 * 60,
-            hour: 1000 * 60 * 60,
-            hours: 1000 * 60 * 60,
-            day: 1000 * 60 * 60 * 24,
-            days: 1000 * 60 * 60 * 24,
-            week: 1000 * 60 * 60 * 24 * 7,
-            weeks: 1000 * 60 * 60 * 24 * 7,
-            month: 1000 * 60 * 60 * 24 * 30,
-            months: 1000 * 60 * 60 * 24 * 30,
-            year: 1000 * 60 * 60 * 24 * 365,
-            years: 1000 * 60 * 60 * 24 * 365
-        }
-        let tUnit = args[1];
-        let rmMsgL = message.url;
-        if(isNaN(number) || unitAmounts[args[1]] == undefined) {
-            badErr(message);
-            return;
-        }
-        number = number * unitAmounts[tUnit];
-        console.log(number);
-        setTimeout(() => {
-            message.author.send(`reminder: ${rmMsgL}`);
-        }, number);
-        message.reply(`${check} Okay.`);
+        await remindmeF.remindmeCmd(message);
         return;
     }
-    // i (edited) my message
     if(message.content.toLowerCase() == `${prefix}edited`) {
-        let editedMsg = await message.channel.send('i');
-        await editedMsg.edit('‫my message ‫i');
+        await editedF.editedCmd(message);
         return;
     }
-    // inspiration command
     if(message.content.toLowerCase() == `${prefix}inspiration`) {
-        message.channel.startTyping();
-        let insAPI = await (await fetch("https://inspirobot.me/api?generate=true&oy=vey")).text();
-        let insQ = new Discord.MessageAttachment(insAPI);
-        message.channel.send(insQ);
-        message.channel.stopTyping();
+        await inspirationF.inspirationCmd(message);
         return;
     }
-    // rock paper scissors
     if(message.content.toLowerCase() == `${prefix}rps`) {
-        let rps = ["rock", "paper", "scissors"];
-        let rpsRNG = Math.floor(Math.random() * rps.length);
-        let botChoice = rps[rpsRNG];
-        let botChoiceN = rps.indexOf(botChoice);
-        let rpsChan = message.channel;
-        let filter = m => m.author.id === message.author.id;
-        let colCounter = 1;
-        let msgCollector = new Discord.MessageCollector(rpsChan, filter);
-        message.channel.send('Pick one: rock, paper or scissors');
-        // eslint-disable-next-line no-unused-vars
-        msgCollector.on('collect', async(message, collect) => {
-            colCounter = colCounter++;
-            if(colCounter == 1) {
-                if(message.content.toLowerCase() !== "rock" && message.content.toLowerCase() !== "paper" && message.content.toLowerCase() !== "scissors") {
-                    message.channel.send(':x: You have to pick rock, paper or scissors.');
-                    return;
-                }
-                let userChoice = message.content.toLowerCase();
-                await keyv.set('rps-user-choice', userChoice);
-                let userChoiceN = rps.indexOf(userChoice);
-                await keyv.set('rps-user-choice-number', userChoiceN);
-                msgCollector.stop();
-            }
-        });
-        // eslint-disable-next-line no-unused-vars
-        msgCollector.on('end', async collected => {
-            let userChoice = await keyv.get('rps-user-choice');
-            let userChoiceN = await keyv.get('rps-user-choice-number');
-            if(userChoice == botChoice) {
-                message.channel.send(`${botChoice}, It's a tie.`);
-                return;
-            } else if( (userChoiceN + 1) % 3 == botChoiceN) {
-                message.channel.send(`${botChoice}, I win!`);
-                return;
-            } else {
-                message.channel.send(`${botChoice}, You win!`);
-                return;
-            }
-        });
+        await rpsF.rpsCmd(message);
         return;
     }
+    // card jitsu command
     if(message.content.toLowerCase() == `${prefix}cardjitsu` || message.content.toLowerCase() == `${prefix}card jitsu`) {
         let cards = [ "fire", "water", "ice" ];
         let cardNumbers = [ "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12" ];
