@@ -6,8 +6,6 @@ const bot = new Discord.Client();
 const Keyv = require('keyv');
 const keyv = new Keyv('sqlite://database.sqlite');
 const botID = '705103167557337258';
-const check = ':white_check_mark:';
-const functionsF = require('./src/functions.js');
 const dogF = require('./src/commands/fun/dog.js');
 const catF = require('./src/commands/fun/cat.js');
 const randomwordF = require('./src/commands/fun/randomword.js');
@@ -29,7 +27,10 @@ const remindmeF = require('./src/commands/useful/remindme.js');
 const guessF = require('./src/commands/fun/guess.js');
 const sayF = require('./src/commands/fun/say.js');
 const calculateF = require('./src/commands/useful/calculate.js');
-const badErr = functionsF.badErr;
+const prefixF = require('./src/commands//misc/prefix.js');
+const todoF = require('./src/commands/useful/todo.js');
+const pingF = require('./src/commands/misc/ping.js');
+const testF = require('./src/commands/misc/test.js');
 
 // bot ready message
 bot.on('ready', async () => {
@@ -60,19 +61,17 @@ bot.on('message', async (message) => {
     args.shift();
     // test command
     if(message.content.toLowerCase() == `${prefix}test`) {
-        message.reply(`${check} It works!`);
+        await testF.testCmd(message);
         return;
     }
     // ping command
     if(message.content.toLowerCase() == `${prefix}ping`) {
-        const msg = await message.channel.send('🏓Pinging...');
-        msg.edit(`🏓Pong!\nLatency is ${Math.floor(msg.createdTimestamp - message.createdTimestamp)}ms`);
+        await pingF.pingCmd(message);
         return;
     }
     // pimg command
     if(message.content.toLowerCase() == `${prefix}pimg`) {
-        const msgpimg = await message.channel.send('🏓Pimgimg...');
-        msgpimg.edit(`🏓Pomg!\nLatemcy is ${Math.floor(msgpimg.createdTimestamp - message.createdTimestamp)}ms`);
+        await pingF.pimgCmd(message);
         return;
     }
     if(message.content.toLowerCase() == `${prefix}serverinfo`) {
@@ -85,136 +84,36 @@ bot.on('message', async (message) => {
     }
     // todo list command
     if(message.content.toLowerCase().startsWith(`${prefix}todo list`)) {
-        if(message.content.toLowerCase() == `${prefix}todo list`) {
-            let todoList = await keyv.get('todo-list'+message.author.id);
-            let todoPrivate = await keyv.get('todo-private'+message.author.id);
-            if(todoPrivate == true) {
-                bot.users.resolve(message.author.id).send(`**__${message.author.username}'s todo list:__**\n`+todoList.map((item, i) => (i + 1) + ". " + item).join("\n"), {split: true});
-                message.reply(`I've sent you a DM with your todo list.`);
-                return;
-            }
-            if(todoList == undefined) {
-                todoList = [];
-            }
-            if(todoList.length == 0) {
-                message.reply(':x: Your todo list is empty. You can add todos to your todo list with `mb!todo add`');
-                return;
-            }
-            message.channel.send(`**__${message.author.username}'s todo list:__**\n`+todoList.map((item, i) => (i + 1) + ". " + item).join("\n"), {split: true});
-            return;
-        }
-        let todoUserID = message.content.substring(13);
-        let todoUser = bot.users.resolve(todoUserID);
-        if(todoUser == null) {
-            badErr(message);
-            return;
-        }
-        let todoPrivate = await keyv.get('todo-private'+todoUser.id);
-        if(todoUser == undefined) {
-            badErr(message);
-            return;
-        }
-        if(todoUser == message.author.id) {
-            if(todoPrivate == true) {
-                let todoList = await keyv.get('todo-list'+todoUser.id);
-                if(todoList.length == 0) {
-                    message.reply(':x: Your todo list is empty. You can add todos to your todo list with `mb!todo add`');
-                    return;
-                }
-                bot.users.resolve(message.author.id).send(`**__${message.author.username}'s todo list:__**\n`+todoList.map((item, i) => (i + 1) + ". " + item).join("\n"), {split: true});
-                message.reply(`I've sent you a DM with your todo list.`);
-                return;
-            } else {
-                message.channel.send(`**__${message.author.username}'s todo list:__**\n`+todoList.map((item, i) => (i + 1) + ". " + item).join("\n"), {split: true});
-                return;
-            }
-        }
-        if(todoPrivate == true) {
-            message.reply(`:x: ${todoUser.username}'s todo list is private.`);
-            return;
-        }
-        let todoList = await keyv.get('todo-list'+todoUser.id);
-        if(todoList == undefined) {
-            message.reply(`:x: ${todoUser.username}'s todo list is empty.`);
-            return;
-        }
-        message.channel.send(`**__${todoUser.username}'s todo list:__**\n`+todoList.map((item, i) => (i + 1) + ". " + item).join("\n"), {split: true});
+        await todoF.todoListCmd(message);
         return;
     }
     if(message.content.toLowerCase() == `${prefix}todo`) {
-        message.reply(`\`${prefix}todo\` is not a command, type \`${prefix}help todo\` for a list of todo commands.`);
+        await todoF.todoErr(message);
         return;
     }
     // todo add command
     if(message.content.toLowerCase().startsWith(`${prefix}todo add`)) {
-        if(message.content.toLowerCase() == `${prefix}todo add`) {
-            badErr(message);
-            return;
-        }
-        let todoList = await keyv.get('todo-list'+message.author.id);
-        let todoMsg = message.content.substring(12);
-        if(todoList == undefined) {
-            todoList = [];
-        }
-        todoList.push(todoMsg);
-        message.reply(`${check} Done.`);
-        await keyv.set('todo-list'+message.author.id, todoList);
+        await todoF.todoAddCmd(message);
         return;
     }
     // todo remove command
     if(message.content.toLowerCase().startsWith(`${prefix}todo remove`)) {
-        let todoMsg = message.content.substring(15);
-        let todoList = await keyv.get('todo-list'+message.author.id);
-        let indexToRemove = todoList.indexOf( todoMsg );
-        if(todoList.length == 0) {
-            message.reply(':x: There is nothing to remove from your todo list.');
-            return;
-        }
-        if(indexToRemove == -1) {
-            indexToRemove = parseInt(todoMsg, 10) - 1;
-        }
-        if(indexToRemove < 0 || indexToRemove >= todoList.length || isNaN(indexToRemove)) {
-            badErr(message);
-            return;
-        }
-        todoList.splice(indexToRemove, 1);
-        await keyv.set('todo-list'+message.author.id, todoList);
-        message.reply(`${check} Done.`);
+        await todoF.todoRemoveCmd(message);
         return;
     }
     // todo private command
     if(message.content.toLowerCase() == `${prefix}todo private`) {
-        let todoPrivate = await keyv.get('todo-private'+message.author.id);
-        if(todoPrivate == undefined) {
-            todoPrivate = false;
-        }
-        if(todoPrivate == false) {
-            todoPrivate = true;
-        } else {
-            todoPrivate = false;
-        }
-        await keyv.set('todo-private'+message.author.id, todoPrivate);
-        if(todoPrivate == true) {
-            message.reply(`${check} Done, your todo list is now private.`);
-            return;
-        }
-        if(todoPrivate == false) {
-            message.reply(`${check} Done, your todo list is now public.`);
-            return;
-        }
+        await todoF.todoPrivateCmd(message);
         return;
     }
-    // prefix command
     if(message.content.toLowerCase() == `${prefix}prefix` || message.content.toLowerCase() == `<@!${botID}> prefix`) {
-        message.reply(`The prefix is \`${prefix}\``);
+        await prefixF.prefixCmd(message);
         return;
     }
-    // calculate command
     if(message.content.toLowerCase().startsWith(`${prefix}calculate`)) {
         await calculateF.calculateCmd(message);
         return;
     }
-    // say command
     if(message.content.toLowerCase().startsWith(`${prefix}say`) == true) {
         await sayF.sayCmd(message);
         return;
