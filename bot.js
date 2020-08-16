@@ -142,11 +142,6 @@ bot.on('message', async (message) => {
         await rpsF.rpsCmd(message);
         return;
     }
-    // card jitsu command
-    if(message.content.toLowerCase() == `${prefix}cardjitsu` || message.content.toLowerCase() == `${prefix}card jitsu`) {
-        let cards = [ "fire", "water", "ice" ];
-        let cardNumbers = [ "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12" ];
-    }
     if(message.content.toLowerCase().startsWith(`${prefix}flip a coin`)) {
         await flipacoinF.flipacoinCmd(message);
         return
