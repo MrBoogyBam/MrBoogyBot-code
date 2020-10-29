@@ -14,7 +14,6 @@ const serverinfoF = require('./src/commands/useful/serverinfo.js');
 const userinfoF = require('./src/commands/useful/userinfo.js');
 const flipacoinF = require('./src/commands/fun/flipacoin.js');
 const suggestF = require('./src/commands/misc/suggest.js');
-const reportbugF = require('./src/commands/useful/report.js');
 const abcF = require('./src/commands/fun/abc.js');
 const abcData = abcF.abcData;
 const potF = require('./src/commands/useful/pot.js');
@@ -150,10 +149,6 @@ bot.on('message', async (message) => {
         await suggestF.suggestCmd(message);
         return;
     }
-    if(message.content.toLowerCase().startsWith(`${prefix}reportbug` || message.content.toLowerCase() == `${prefix}bugreport` || message.content.toLowerCase() == `${prefix}report bug` || message.cotnent.toLowerCase() == `${prefix}bug report`)) {
-        await reportbugF.reportbugCmd(message);
-        return;
-    }
     if(message.content.toLowerCase() == `${prefix}abc`) {
         await abcF.abcCmd(message);
         return;
@@ -214,142 +209,169 @@ bot.on('message', async (message) => {
     // help command
     if(message.content.toLowerCase().startsWith(`${prefix}help`)) {
         if(message.content.toLowerCase() == `${prefix}help`) {
-            const commandsHelp = `\n**Some of the commands were deleted**\n\n__**Type \`${prefix}help command\` to see what the command does.**__\n`;
-            const botPrefix = `**${prefix}** - Bot's prefix\n\n`;
-            const pingCmd = `**${prefix}ping**\n`;
-            const infoCmds = `**${prefix}info**\n`;
-            const sayCmd = `**${prefix}say**\n`;
-            const suggestCmd = `**${prefix}suggest**\n`;
-            const bugReportCmd = `**${prefix}reportbug**\n`;
-            const potCmd = `**${prefix}pot**\n`;
-            const rollCmd = `**${prefix}roll**\n`;
-            const flipACoinCmd = `**${prefix}flip a coin**\n`;
-            const todoCmds = `**${prefix}todo**\n`;
-            const guessCmds = `**${prefix}guess**\n`;
-            const calculateCmd = `**${prefix}calculate**\n`;
-            const dogCmd = `**${prefix}dog**\n`;
-            message.reply(`${commandsHelp}${botPrefix}${pingCmd}${infoCmds}${sayCmd}${suggestCmd}${bugReportCmd}${potCmd}${rollCmd}${flipACoinCmd}${todoCmds}${guessCmds}${calculateCmd}${dogCmd}`);
+            const helpTitle = `\n__**${bot.user.username}**__\n\n`;
+            const miscH = `**${prefix}help misc** - misc commands\n`;
+            const funH = `**${prefix}help fun** - fun commands\n`;
+            const usefulH = `**${prefix}help useful** - useful commands\n`;
+            const boringH = `**${prefix}help boring** - boring commands`;
+            message.reply(`${helpTitle}${miscH}${funH}${usefulH}${boringH}`);
             return;
         }
-        let helpMsg = message.content.substring(8);
-        const typeHelp = `\n__**Type \`${prefix}help command\` to see what the command does.**__\n`;
-        const todoHelp = `${typeHelp}**__${prefix}todo commands__**\n\n**${prefix}todo list**\n**${prefix}todo add**\n**${prefix}todo remove**\n**${prefix}todo clear**\n**${prefix}todo private**\n**${prefix}todo check**`;
-        const quoteHelp = `${typeHelp}**__${prefix}quote commands__**\n\n**${prefix}quote request**\n**${prefix}quote**`;
-        const guessHelp = `${typeHelp}**__${prefix}guess commands__**\n\n**${prefix}guessset**\n**${prefix}guess**`;
-        const infoHelp = `${typeHelp}**__${prefix}info commands__**\n\n**${prefix}serverinfo**\n**${prefix}userinfo**`;
-        const pingHelp = `\n__**${prefix}ping**__\nShows you the ping of the bot.`;
-        const sayHelp = `\n**__${prefix}say__**\nThe bot will say what you told him to say.\nFor example:\n\`${prefix}say test\`\n\`bot: test\``;
-        const suggestHelp = `\n__**${prefix}suggest**__\nThe bot will send the creator of the bot your suggestion.\nFor example:\n\`${prefix}suggest make a todo list command\``;
-        const bugReportHelp = `\n__**${prefix}reportbug**__\nThe bot will send the creator of the bot your bug report.\nFor example:\n\`${prefix}reportbug mb!roll is not working.\``;
-        const potHelp = `\n__**${prefix}pot**__\nShows you how to install potPNG mod.`;
-        const rollHelp = `\n__**${prefix}roll**__\nRolls a number between a range you choose.\nFor example:\n\`${prefix}roll ${Math.floor((Math.random() * 10) + 1)}/${Math.floor((Math.random() * 100) + 10)}\``;
-        const flipACoinHelp = `\n__**${prefix}flip a coin**__\nFlips a coin.\nFor example:\n\`${prefix}flip a coin heads\`\n\`bot: It's tails, you lose.\`\nor\n\`${prefix}flip a coin\`\n\`bot: The coin landed on heads.\``;
-        const userinfoHelp = `\n__**${prefix}userinfo**__\nShows information about your account, you can also use it on other people.\nFor example:\n\`${prefix}userinfo 368115473310547969\``;
-        const serverinfoHelp = `\n__**${prefix}serverinfo**__\nShows information about the server.`;
-        const guesssetHelp = `\n__**${prefix}guessset**__\nSet a range for \`${prefix}guess\`.\nFor example:\n\`${prefix}guessset ${Math.floor((Math.random() * 10) + 1)}/${Math.floor((Math.random() * 100) + 10)}\``;
-        const guessHelp2 = `\n__**${prefix}guess**__\nGuess a random number between the range you set.\nFor example:\n\`${prefix}guess ${Math.floor((Math.random() * 100) + 10)}\``;
-        const todoLHelp = `\n__**${prefix}todo list**__\nThe bot will send you your todo list.`;
-        const todoAHelp = `\n__**${prefix}todo add**__\nAdd an item to your todo list.\nFor example:\n\`${prefix}todo add test\``;
-        const todoRHelp = `\n__**${prefix}todo remove**__\nRemove an item from your todo list.\nFor example:\n\`${prefix}todo remove test\` (You can also use numbers.)`;
-        const todoChHelp = `\n__**${prefix}todo check**__\nChecks an item in your todo list.\nFor example:\n\`${prefix}todo check test\` (Also works with numbers)`;
-        const todoCHelp = `\n__**${prefix}todo clear**__\nClears your todo list.`;
-        const todoPHelp = `\n__**${prefix}todo private**__\nMakes your todo list private.`;
-        const calculateHelp = `\n__**${prefix}calculate**__\nCalculator.\nFor example:\n\`${prefix}calculate 1 + 2\`\n\`bot: 3\``;
-        const dogHelp = `\n__**${prefix}dog**__\nSends a random image of a dog.\n`
-        if(helpMsg.toLowerCase() == `ping`) {
-            message.reply(pingHelp);
+        if(message.content.toLowerCase() == `${prefix}help misc`) {
+            const helpTitle = `\n__**${bot.user.username} misc commands:**__\n\n`;
+            const testH = `**${prefix}help test**\n`;
+            const prefixH = `**${prefix}help prefix**\n`;
+            const pingH = `**${prefix}help ping**\n`;
+            const suggestH = `**${prefix}help suggest**`;
+            message.reply(`${helpTitle}${testH}${prefixH}${pingH}${suggestH}`);
             return;
         }
-        if(helpMsg.toLowerCase() == `dog`) {
-            message.reply(dogHelp);
+        if(message.content.toLowerCase() == `${prefix}help fun`) {
+            const helpTitle = `\n__**${bot.user.username} fun commands:**__\n\n`;
+            const dogH = `**${prefix}help dog**\n`;
+            const catH = `**${prefix}help cat**\n`;
+            const randomwordH = `**${prefix}help randomword**\n`;
+            const flipacoinH = `**${prefix}help flipacoin**\n`;
+            const guessH = `**${prefix}help guess**\n`;
+            const rollH = `**${prefix}help roll**\n`;
+            const rpsH = `**${prefix}help rps**\n`;
+            const sayH = `**${prefix}help say**\n`;
+            const inspirationH = `**${prefix}help inspiration**\n`;
+            const abcH = `**${prefix}help abc**`;
+            message.reply(`${helpTitle}${dogH}${catH}${randomwordH}${flipacoinH}${guessH}${rollH}${rpsH}${sayH}${inspirationH}${abcH}`);
             return;
         }
-        if(helpMsg.toLowerCase() == `calculate`) {
-            message.reply(calculateHelp);
+        if(message.content.toLowerCase() == `${prefix}help useful`) {
+            const helpTitle = `\n__**${bot.user.username} useful commands:**__\n\n`;
+            const remindmeH = `**${prefix}help remindme**\n`;
+            const todoH = `**${prefix}help todo**\n`;
+            const calculateH = `**${prefix}help calculate**\n`;
+            const serverinfoH = `**${prefix}help serverinfo**\n`;
+            const userinfoH = `**${prefix}help userinfo**\n`;
+            const potH = `**${prefix}help pot**\n`;
             return;
         }
-        if(helpMsg.toLowerCase() == `todo private`) {
-            message.reply(todoPHelp);
+        if(message.content.toLowerCase() == `${prefix}help boring`) {
+            const helpTitle = `\n__**${bot.user.username} boring commands**__\n\n`;
+            const editedH = `**${prefix}help edited**`;
+            message.reply(`${helpTitle}${editedH}`);
             return;
         }
-        if(helpMsg.toLowerCase() == `todo clear`) {
-            message.reply(todoCHelp);
+        const helpMsg = message.content.toLowerCase().substring(8);
+        const testH = `\n__**Test command:**__\nA command to check if the bot is working.`;
+        const prefixH = `\n__**Prefix command:**__\nTells you the bot's prefix.`;
+        const pingH = `\n__**Ping command:**__\nShows you the bot's latency.`;
+        const suggestH = `\n__**Suggest command:**__\nSends a suggestion to the creator of the bot.\n\n__**For example:**__\n\`${prefix}suggest ${prefix}dog - a command that sends a random image of a dog.\``;
+        const dogH = `\n__**Dog command:**__\nSends a random image of a dog.`;
+        const catH = `\n__**Cat command:**__\nSends a random image of a cat.`;
+        const randomwordH = `\n__**Randomword command:**__\nSends a random word that you have to type out.`;
+        const flipacoinH = `\n__**Flip a coin command:**__\nFlips a coin, you can also pick heads or tails.`;
+        const guessCmds = `\n__**Guess commands:**__\n\n**${prefix}help guess2**\n**${prefix}help guessset**`;
+        const guesssetH = `\n__**Guessset command:**__\nSet a random number to guess with the \`${prefix}guess\` command.\n\n__**For example**__\n\`${prefix}guessset 3/75\``;
+        const guessH = `\n__**Guess command:**__\nGuess the number you set with \`${prefix}guessset\`.`;
+        const rollH = `\n__**Roll command:**__\nRolls a random number that you set.\n\n__**For example**__\n\`${prefix}roll 5/69\``;
+        const rpsH = `\n__**Rps command:**__\nRock paper scissors.`;
+        const sayH = `\n__**Say command:**__\nMake the bot say something.`;
+        const inspirationH = `\n__**Inspiration command:**__\nSends a funny random inspiration.`;
+        const abcH = `\n__**Abc command:**__\nType the English Alphabet as fast as you can.`;
+        const remindmeH = `\n__**Remindme command:**__\nSets a reminder.\n\n__**For example:**__\n\`${prefix}remindme 3 minutes\``;
+        const todoH = `\n__**Todo commands:**__\n\n**${prefix}todo list**\n**${prefix}todo add**\n**${prefix}todo remove**\n**${prefix}todo private**`;
+        const calculateH = `\n__**Calculate command:**__\nSimple calculator.`;
+        const serverinfoH = `\n__**Serverinfo command:**__\nShows you information about the server.`;
+        const userinfoH = `\n__**Userinfo command:**__\nShows you information about a user.\n\n__**For example:**__\n\`${prefix}userinfo 705103167557337258\``;
+        const potH = `\n__**Pot command:**__\nShows you how to install potPNG mod for getting over it.`;
+        const editedH = `\n__**Edited command:**__\ni edited this message.`;
+
+        if(helpMsg == 'edited') {
+            message.reply(editedH);
             return;
         }
-        if(helpMsg.toLowerCase() == `todo check`) {
-            message.reply(todoChHelp);
+        if(helpMsg == `pot`) {
+            message.reply(potH);
             return;
         }
-        if(helpMsg.toLowerCase() == `todo remove`) {
-            message.reply(todoRHelp);
+        if(helpMsg == `userinfo`) {
+            message.reply(userinfoH);
             return;
         }
-        if(helpMsg.toLowerCase() == `todo add`) {
-            message.reply(todoAHelp);
+        if(helpMsg == `serverinfo`) {
+            message.reply(serverinfoH);
             return;
         }
-        if(helpMsg.toLowerCase() == `todo list`) {
-            message.reply(todoLHelp);
+        if(helpMsg == `calculate`) {
+            message.reply(calculateH);
             return;
         }
-        if(helpMsg.toLowerCase() == `guess`) {
-            message.reply(guessHelp2);
+        if(helpMsg == `todo`) {
+            message.reply(todoH);
             return;
         }
-        if(helpMsg.toLowerCase() == `guessset`) {
-            message.reply(guesssetHelp);
+        if(helpMsg == `remindme`) {
+            message.reply(remindmeH);
             return;
         }
-        if(helpMsg.toLowerCase() == `serverinfo`) {
-            message.reply(serverinfoHelp);
+        if(helpMsg == `abc`) {
+            message.reply(abcH);
             return;
         }
-        if(helpMsg.toLowerCase() == `userinfo`) {
-            message.reply(userinfoHelp);
+        if(helpMsg == `inspiration`) {
+            message.reply(inspirationH);
+            return;
+        } 
+        if(helpMsg == `say`) {
+            message.reply(sayH);
             return;
         }
-        if(helpMsg.toLowerCase() == `flip a coin`) {
-            message.reply(flipACoinHelp);
+        if(helpMsg == `rps`) {
+            message.reply(rpsH);
             return;
         }
-        if(helpMsg.toLowerCase() == `roll`) {
-            message.reply(rollHelp);
+        if(helpMsg == `roll`) {
+            message.reply(rollH);
             return;
         }
-        if(helpMsg.toLowerCase() == `pot`) {
-            message.reply(potHelp);
+        if(helpMsg == `guess2`) {
+            message.reply(guessH);
             return;
         }
-        if(helpMsg.toLowerCase() == `reportbug`) {
-            message.reply(bugReportHelp);
+        if(helpMsg == `guessset`) {
+            message.reply(guesssetH);
             return;
         }
-        if(helpMsg.toLowerCase() == `suggest`) {
-            message.reply(suggestHelp);
+        if(helpMsg == `guess`) {
+            message.reply(guessCmds);
             return;
         }
-        if(helpMsg.toLowerCase() == `say`) {
-            message.reply(sayHelp);
+        if(helpMsg == `flipacoin`) {
+            message.reply(flipacoinH);
             return;
         }
-        if(helpMsg.toLowerCase() == `info`) {
-            message.reply(infoHelp);
+        if(helpMsg == `randomword`) {
+            message.reply(randomwordH);
             return;
         }
-        if(helpMsg.toLowerCase() == `todo`) {
-            message.reply(todoHelp);
+        if(helpMsg == `cat`) {
+            message.reply(catH);
             return;
         }
-        if(helpMsg.toLowerCase() == `quote`) {
-            message.reply(quoteHelp);
+        if(helpMsg == `dog`) {
+            message.reply(dogH);
             return;
         }
-        if(helpMsg.toLowerCase() == `guess`) {
-            message.reply(guessHelp);
+        if(helpMsg == `test`) {
+            message.reply(testH);
             return;
         }
-        if(helpMsg) {
-            message.reply(`:x: This is not a command, type \`${prefix}help\` for a list of commands.`);
+        if(helpMsg == `prefix`) {
+            message.reply(prefixH);
+            return;
+        } 
+        if(helpMsg == `ping`) {
+            message.reply(pingH);
+            return;
+        }
+        if(helpMsg == `suggest`) {
+            message.reply(suggestH);
             return;
         }
     }

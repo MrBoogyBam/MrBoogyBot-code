@@ -2,7 +2,7 @@ const config = require('../../../config.json');
 const prefix = config.prefix;
 
 async function flipacoinCmd(message) {
-    if(message.content.toLowerCase() == `${prefix}flip a coin`) {
+    if(message.content.toLowerCase() == `${prefix}flip a coin` || message.content.toLowerCase() == `${prefix}flipacoin`) {
         let sides = [ "heads", "tails" ];
         let side = Math.floor(Math.random() * sides.length);
         if(side == 0) {

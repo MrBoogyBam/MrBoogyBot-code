@@ -11,4 +11,4 @@ async function pingCmd(message) {
 }
 
 module.exports.pingCmd = pingCmd;
-module.exports.pingCmd = pimgCmd;
+module.exports.pimgCmd = pimgCmd;
